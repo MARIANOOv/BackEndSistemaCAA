@@ -1,0 +1,20 @@
+GET localhost:3000/resources/
+
+###
+POST http://localhost:3000/resources
+Content-Type: application/json
+
+{
+  "nombre": "Borrador"
+}
+
+###
+DELETE http://localhost:3000/resources/2
+
+###
+PATCH http://localhost:3000/resources/1
+Content-Type: application/json
+
+{
+  "nombre": "Borrador"
+}
