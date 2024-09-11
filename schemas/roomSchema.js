@@ -2,7 +2,7 @@ import z from 'zod'
 
 const roomSchema = z.object({
     imagen: z.string({
-        invalid_type_error: 'La imagen debe ser una imagen',
+        invalid_type_error: 'La imagen debe ser un string',
         required_error: 'La imagen es requerida'
     }).min(1).max(255),
     nombre: z.string({

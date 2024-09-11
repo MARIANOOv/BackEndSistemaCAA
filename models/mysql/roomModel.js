@@ -42,13 +42,23 @@ export class RoomModel {
             estado
         } = input
         try {
+
+            const [result] = await connection.query(
+                'SELECT nombre FROM sala WHERE Nombre = ?',
+                [nombre]
+            )
+
+            if (result.length > 0) {
+                return false
+            }
+
             await connection.query(
                 'INSERT INTO sala (Imagen, Nombre, Descripcion, Restricciones, Estado) VALUES (?, ?, ?, ?, ?)',
                 [imagen, nombre, descripcion, restricciones, estado]
             )
         }
         catch (error) {
-            throw new Error("Error al insertar la sala")
+            throw new Error("Error al crear la sala")
         }
 
         const [room] = await connection.query(
@@ -81,6 +91,15 @@ export class RoomModel {
         } = input
 
         try {
+
+            const [duplicate] = await connection.query(
+                'SELECT nombre FROM sala WHERE Nombre = ?',
+                [nombre]
+            )
+            if (duplicate.length > 0) {
+                return false
+            }
+
             const [result] = await connection.query(
                 `UPDATE sala
        SET Imagen = COALESCE(?, Imagen),

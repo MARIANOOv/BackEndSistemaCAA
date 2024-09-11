@@ -20,6 +20,7 @@ export class RoomController {
             return res.status(400).json({error: JSON.parse(result.error.message)})
         }
         const newRoom= await RoomModel.create({input: req.body})
+        if(newRoom === false) return res.status(409).json({message: 'Sala con ese nombre ya existe'})
         res.status(201).json(newRoom)
     }
 
