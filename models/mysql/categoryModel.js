@@ -12,25 +12,25 @@ const config = {
 
 const connection = await mysql.createConnection(config)
 
-export class roleModel {
+export class categoryModel {
 
     static async getAll () {
-        const [roles] = await connection.query(
-            'SELECT * FROM rol',
+        const [categories] = await connection.query(
+            'SELECT * FROM categoria',
         )
-        return roles
+        return categories
     }
 
     static async getById ({ id }) {
-        const [role] = await connection.query(
-            'SELECT * FROM rol WHERE idRol = ?',
+        const [category] = await connection.query(
+            'SELECT * FROM categoria WHERE idCategoria = ?',
             [id]
         )
-        if(role.length === 0) {
+        if(category.length === 0) {
             return null
         }
 
-        return role[0]
+        return category[0]
     }
 
     static async create ({ input }) {
@@ -40,7 +40,7 @@ export class roleModel {
         try {
 
             const [result] = await connection.query(
-                'SELECT nombre FROM rol WHERE Nombre = ?',
+                'SELECT nombre FROM categoria WHERE Nombre = ?',
                 [nombre]
             )
 
@@ -49,30 +49,30 @@ export class roleModel {
             }
 
             await connection.query(
-                'INSERT INTO rol (Nombre) VALUES (?)',
+                'INSERT INTO categoria (Nombre) VALUES (?)',
                 [nombre]
             )
         }
         catch (error) {
-            throw new Error("Error al crear el rol")
+            throw new Error("Error al crear la Categoria")
         }
 
-        const [role] = await connection.query(
+        const [category] = await connection.query(
             `SELECT *
-             FROM rol WHERE idRol = LAST_INSERT_ID();`
+             FROM categoria WHERE idCategoria = LAST_INSERT_ID();`
         )
-        return role[0]
+        return category[0]
     }
 
     static async delete ({ id }) {
         try {
             await connection.query(
-                'DELETE FROM rol WHERE idRol = ?',
+                'DELETE FROM categoria WHERE idCategoria = ?',
                 [id]
             )
         }
         catch (error) {
-            throw new Error("Error al eliminar el rol")
+            throw new Error("Error al eliminar la Categoria")
         }
         return true
     }
@@ -85,7 +85,7 @@ export class roleModel {
         try {
 
             const [duplicate] = await connection.query(
-                'SELECT nombre FROM rol WHERE Nombre = ?',
+                'SELECT nombre FROM categoria WHERE Nombre = ?',
                 [nombre]
             )
             if (duplicate.length > 0) {
@@ -93,24 +93,24 @@ export class roleModel {
             }
 
             const [result] = await connection.query(
-                `UPDATE rol
+                `UPDATE categoria
        SET Nombre = COALESCE(?, Nombre)
-       WHERE idRol = ?;`,
+       WHERE idCategoria = ?;`,
                 [nombre, id]
             );
             if (result.affectedRows === 0) {
-                throw new Error('No se encontro el rol con ese id');
+                throw new Error('No se encontro la categoria con ese id');
             }
 
-            const [updatedRole] = await connection.query(
+            const [updatedCategory] = await connection.query(
                 `SELECT *
-                    FROM rol WHERE idRol = ?;`,
+                    FROM categoria WHERE idCategoria = ?;`,
                 [id]
             );
 
-            return updatedRole[0];
+            return updatedCategory[0];
         } catch (error) {
-            throw new Error("Error al actualizar el Rol");
+            throw new Error("Error al actualizar la Categoria");
         }
     }
 
