@@ -10,10 +10,10 @@ app.use(express.json());
 app.disable('x-powered-by');
 
 app.use('/rooms', roomRouter);
-app.use('/roles', roleRouter);
-app.use('/categories', categoryRouter);
 app.use('/cubicles', cubicleRouter);
 app.use('/resources', resourceRouter);
+app.use('/roles', roleRouter);
+app.use('/categories', categoryRouter);
 
 const PORT = process.env.PORT ?? 3000;
 
