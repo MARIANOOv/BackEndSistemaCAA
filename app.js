@@ -2,12 +2,16 @@ import express from 'express';
 import {roomRouter} from "./routes/roomRouter.js";
 import {cubicleRouter} from "./routes/cubicleRouter.js";
 import {resourceRouter} from "./routes/resourceRouter.js";
+import {roleRouter} from "./routes/roleRouter.js";
+import {categoryRouter} from "./routes/categoryRouter.js";
 
 const app = express();
 app.use(express.json());
 app.disable('x-powered-by');
 
 app.use('/rooms', roomRouter);
+app.use('/roles', roleRouter);
+app.use('/categories', categoryRouter);
 app.use('/cubicles', cubicleRouter);
 app.use('/resources', resourceRouter);
 

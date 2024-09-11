@@ -4,7 +4,7 @@ const config = {
     host: 'localhost',
     user: 'root',
     port: 3306,
-    password: '1811',
+    password: 'root',
     database: 'sistemacaa',
 }
 
