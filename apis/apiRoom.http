@@ -23,49 +23,5 @@ Content-Type: application/json
   "nombre": "Sala brandon"
 }
 
-###Estos son los endpoints de la tabla roles
-###
-GET http://localhost:3000/roles
-
-###
-POST http://localhost:3000/roles
-Content-Type: application/json
-
-{
-  "nombre": "Administrador"
-}
-
-###
-DELETE http://localhost:3000/roles/1
-
-###
-PATCH http://localhost:3000/roles/2
-Content-Type: application/json
-
-{
-  "nombre": "Estudiante"
-}
-
-###Estos son los endpoints de la tabla categories
-###
-GET http://localhost:3000/categories
 
 
-###
-POST http://localhost:3000/categories
-Content-Type: application/json
-
-{
-  "nombre": "Laptop"
-}
-
-###
-DELETE http://localhost:3000/categories/1
-
-###
-PATCH http://localhost:3000/categories/2
-Content-Type: application/json
-
-{
-  "nombre": "Laptop"
-}

@@ -1,0 +1,22 @@
+###Estos son los endpoints de la tabla roles
+###
+GET http://localhost:3000/roles
+
+###
+POST http://localhost:3000/roles
+Content-Type: application/json
+
+{
+  "nombre": "Administrador"
+}
+
+###
+DELETE http://localhost:3000/roles/1
+
+###
+PATCH http://localhost:3000/roles/2
+Content-Type: application/json
+
+{
+  "nombre": "Estudiante"
+}
