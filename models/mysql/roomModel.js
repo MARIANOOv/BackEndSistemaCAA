@@ -6,13 +6,14 @@ const config = {
     host: 'localhost',
     user: 'root',
     port: 3306,
-    password: 'root',
+    password: '1811',
     database: 'sistemacaa',
 }
 
 const connection = await mysql.createConnection(config)
 
 export class RoomModel {
+
     static async getAll () {
         const [rooms] = await connection.query(
             'SELECT * FROM sala',
@@ -28,6 +29,7 @@ export class RoomModel {
         if(room.length === 0) {
             return null
         }
+
         return room[0]
     }
 
@@ -53,10 +55,7 @@ export class RoomModel {
             `SELECT *
              FROM sala WHERE idSala = LAST_INSERT_ID();`
         )
-
         return room[0]
-
-
     }
 
     static async delete ({ id }) {
@@ -92,7 +91,6 @@ export class RoomModel {
        WHERE idSala = ?;`,
                 [imagen, nombre, descripcion, restricciones, estado, id]
             );
-
             if (result.affectedRows === 0) {
                 throw new Error('No se encontro la sala con ese id');
             }
@@ -104,8 +102,8 @@ export class RoomModel {
             );
 
             return updatedRoom[0];
-        } catch (e) {
-            throw new Error(e);
+        } catch (error) {
+            throw new Error("Error al actualizar la sala");
         }
     }
 
