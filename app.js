@@ -1,5 +1,6 @@
 import express from 'express';
 import {roomRouter} from "./routes/roomRouter.js";
+import {cubicleRouter} from "./routes/cubicleRouter.js";
 import {roleRouter} from "./routes/roleRouter.js";
 import {categoryRouter} from "./routes/categoryRouter.js";
 
@@ -8,6 +9,7 @@ app.use(express.json());
 app.disable('x-powered-by');
 
 app.use('/rooms', roomRouter);
+app.use('/cubicles', cubicleRouter);
 app.use('/roles', roleRouter);
 app.use('/categories', categoryRouter);
 

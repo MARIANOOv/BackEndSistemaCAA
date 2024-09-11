@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import {RoomController} from "../controllers/roomController.js";
-import {RoomModel} from "../models/mysql/roomModel.js";
+
 
 
 export const roomRouter = Router();
