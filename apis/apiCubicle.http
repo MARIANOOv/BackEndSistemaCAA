@@ -1,0 +1,21 @@
+GET localhost:3000/cubicles/
+
+###
+POST http://localhost:3000/cubicles
+Content-Type: application/json
+
+{
+  "nombre": "Cubiculo 2",
+  "ventana": false
+}
+
+###
+DELETE http://localhost:3000/cubicles/1
+
+###
+PATCH http://localhost:3000/cubicles/2
+Content-Type: application/json
+
+{
+  "nombre": "Cubiculo 1"
+}
