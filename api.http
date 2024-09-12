@@ -1,24 +1,24 @@
-GET localhost:3000/rooms
 
-###
-POST http://localhost:3000/rooms
+### "GetAll"
+GET localhost:3000/states
+### "GetById"
+GET localhost:3000/states/2
+
+### "Post"
+POST http://localhost:3000/states
 Content-Type: application/json
 
 {
-  "imagen": "10987",
-  "nombre": "Sala sigi",
-  "descripcion": "Sala de testeo de insert de datos 4",
-  "restricciones": "No se permiten niños",
-  "estado": true
+  "tipo": "Disponible"
 }
 
-###
-DELETE http://localhost:3000/rooms/3
+### "Delete"
+DELETE http://localhost:3000/states/1
 
-###
-PATCH http://localhost:3000/rooms/5
+### "Patch"
+PATCH http://localhost:3000/states/2
 Content-Type: application/json
 
 {
-  "nombre": "Sala brandon"
+  "tipo": "Prestado"
 }

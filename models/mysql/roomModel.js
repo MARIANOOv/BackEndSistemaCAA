@@ -1,16 +1,8 @@
 import mysql from 'mysql2/promise'
+import {DBConfig} from '../../DBConfig.js'
 
 
-
-const config = {
-    host: 'localhost',
-    user: 'root',
-    port: 3306,
-    password: '1811',
-    database: 'sistemacaa',
-}
-
-const connection = await mysql.createConnection(config)
+const connection = await mysql.createConnection(DBConfig)
 
 export class RoomModel {
 
