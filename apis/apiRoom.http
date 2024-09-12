@@ -6,9 +6,8 @@ Content-Type: application/json
 
 {
   "imagen": "10987",
-  "nombre": "Sala sigi",
+  "nombre": "Sala moco",
   "descripcion": "Sala de testeo de insert de datos 4",
-  "restricciones": "No se permiten niños",
   "estado": true
 }
 
@@ -39,7 +38,7 @@ Content-Type: application/json
 DELETE http://localhost:3000/roles/1
 
 ###
-PATCH http://localhost:3000/roles/2
+PATCH http://localhost:3000/roles/1
 Content-Type: application/json
 
 {
@@ -63,9 +62,9 @@ Content-Type: application/json
 DELETE http://localhost:3000/categories/1
 
 ###
-PATCH http://localhost:3000/categories/2
+PATCH http://localhost:3000/categories/1
 Content-Type: application/json
 
 {
-  "nombre": "Laptop"
+  "nombre": "Monitor"
 }
