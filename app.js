@@ -4,6 +4,7 @@ import {cubicleRouter} from "./routes/cubicleRouter.js";
 import {resourceRouter} from "./routes/resourceRouter.js";
 import {roleRouter} from "./routes/roleRouter.js";
 import {categoryRouter} from "./routes/categoryRouter.js";
+import {stateRouter} from "./routes/stateRouter.js";
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ app.use('/roles', roleRouter);
 app.use('/categories', categoryRouter);
 app.use('/cubicles', cubicleRouter);
 app.use('/resources', resourceRouter);
+app.use('/states', stateRouter);
 
 const PORT = process.env.PORT ?? 3000;
 

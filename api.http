@@ -1,0 +1,24 @@
+GET localhost:3000/rooms
+
+###
+POST http://localhost:3000/rooms
+Content-Type: application/json
+
+{
+  "imagen": "10987",
+  "nombre": "Sala sigi",
+  "descripcion": "Sala de testeo de insert de datos 4",
+  "restricciones": "No se permiten niños",
+  "estado": true
+}
+
+###
+DELETE http://localhost:3000/rooms/3
+
+###
+PATCH http://localhost:3000/rooms/5
+Content-Type: application/json
+
+{
+  "nombre": "Sala brandon"
+}
