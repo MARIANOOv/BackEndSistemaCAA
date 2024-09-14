@@ -1,0 +1,36 @@
+###
+GET http://localhost:3000/assets
+
+###
+POST http://localhost:3000/assets
+Content-Type: application/json
+
+{
+  "numeroPlaca": 182732645,
+  "nombre": "Luz",
+  "descripcion": "LUZ luminosa",
+  "modelo": "HP Pavilion",
+  "numeroSerie": "18273bbb4234",
+  "marca": "HP",
+  "idEstado": 1,
+  "condicion": true,
+  "idCategoria": 2
+}
+
+###
+GET http://localhost:3000/assets/category/2
+
+###
+GET http://localhost:3000/assets/123456711
+
+###
+DELETE http://localhost:3000/assets/12343322
+
+###
+PATCH http://localhost:3000/assets/123456711
+Content-Type: application/json
+
+{
+  "nombre": "Laptoide",
+  "idEstado": 2
+}
