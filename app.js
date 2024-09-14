@@ -7,6 +7,7 @@ import {categoryRouter} from "./routes/categoryRouter.js";
 import {stateRouter} from "./routes/stateRouter.js";
 import {userRouter} from "./routes/userRouter.js";
 import {assetRouter} from "./routes/assetRouter.js";
+import {applicationRouter} from "./routes/applicationRouter.js";
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,7 @@ app.use('/resources', resourceRouter);
 app.use('/states', stateRouter);
 app.use('/users', userRouter);
 app.use('/assets', assetRouter);
+app.use('/applications', applicationRouter);
 
 const PORT = process.env.PORT ?? 3000;
 

@@ -6,5 +6,5 @@ POST http://localhost:3000/states
 Content-Type: application/json
 
 {
-  "tipo": "Malo"
+  "tipo": "Bueno"
 }

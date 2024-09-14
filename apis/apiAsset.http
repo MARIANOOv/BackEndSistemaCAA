@@ -21,13 +21,13 @@ Content-Type: application/json
 GET http://localhost:3000/assets/category/2
 
 ###
-GET http://localhost:3000/assets/123456711
+GET http://localhost:3000/assets/182732645
 
 ###
 DELETE http://localhost:3000/assets/12343322
 
 ###
-PATCH http://localhost:3000/assets/123456711
+PATCH http://localhost:3000/assets/182732645
 Content-Type: application/json
 
 {
