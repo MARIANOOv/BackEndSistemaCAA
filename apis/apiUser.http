@@ -5,11 +5,11 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "cedulaCarnet": 123456710,
+  "cedulaCarnet": 123456711,
   "nombre": "Sigi",
-  "correoEmail": "sigier439@gmail.com",
+  "correoEmail": "sigierv439@gmail.com",
   "contrasena": "123456",
-  "telefono": 123456511,
+  "telefono": 123456711,
   "idRol": 2
 }
 
