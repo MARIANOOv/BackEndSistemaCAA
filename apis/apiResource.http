@@ -5,7 +5,7 @@ POST http://localhost:3000/resources
 Content-Type: application/json
 
 {
-  "nombre": "Borrador"
+  "nombre": "Pillot"
 }
 
 ###

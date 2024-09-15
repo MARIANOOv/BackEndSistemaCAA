@@ -5,7 +5,7 @@ POST http://localhost:3000/cubicles
 Content-Type: application/json
 
 {
-  "nombre": "Cubiculo 2",
+  "nombre": "Cubiculo 1",
   "ventana": false
 }
 

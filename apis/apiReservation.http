@@ -1,0 +1,40 @@
+GET localhost:3000/reservations
+
+###
+GET localhost:3000/reservations/getbyDate/2021-08-21
+
+###
+GET localhost:3000/reservations/getbyRoomId/6
+
+###
+GET localhost:3000/reservations/getbyCubicleId/2
+
+###
+GET localhost:3000/reservations/getbyUserId/123456711
+
+###
+POST http://localhost:3000/reservations
+Content-Type: application/json
+
+{
+  "fecha": "2400-4-29",
+  "horaInicio": "7:00:00",
+  "horaFin": "8:00:00",
+  "idSala": 6 ,
+  "idUsuario": 2021080289,
+  "observaciones": "Quiero papas",
+  "refrigerio": true,
+  "idRecursos": [1,2]
+}
+
+###
+DELETE http://localhost:3000/reservations/12
+
+###
+PATCH http://localhost:3000/reservations/10
+Content-Type: application/json
+
+{
+  "fecha": "2021-08-21",
+  "idRecursos": [1,2]
+}

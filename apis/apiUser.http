@@ -1,16 +1,16 @@
-GET localhost:3000/users/
+GET localhost:3000/users
 
 ###
 POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "cedulaCarnet": 123456711,
-  "nombre": "Sigi",
-  "correoEmail": "sigierv439@gmail.com",
+  "cedulaCarnet": 2021080289,
+  "nombre": "Sigilol",
+  "correoEmail": "sigierv@gmail.com",
   "contrasena": "123456",
-  "telefono": 123456711,
-  "idRol": 2
+  "telefono": 83542332,
+  "idRol": 1
 }
 
 ###

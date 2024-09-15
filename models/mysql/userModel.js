@@ -44,6 +44,7 @@ export class userModel {
                 'SELECT cedulaCarnet FROM usuario WHERE CedulaCarnet = ?',
                 [cedulaCarnet]
             )
+            console.log(resultCedula.length)
             if (resultCedula.length > 0) {
                 return false
             }
@@ -53,6 +54,7 @@ export class userModel {
                 'SELECT correoEmail FROM usuario WHERE CorreoEmail = ?',
                 [correoEmail]
             )
+
             if (resultEmail.length > 0) {
                 return false
             }
@@ -61,6 +63,7 @@ export class userModel {
                 'SELECT telefono FROM usuario WHERE Telefono = ?',
                 [telefono]
             )
+
             if (resultTelefono.length > 0) {
                 return false
             }
@@ -70,6 +73,7 @@ export class userModel {
                 'SELECT idRol FROM rol WHERE idRol = ?',
                 [idRol]
             )
+
             if (resultRole.length <= 0) {
                 return false
             }
