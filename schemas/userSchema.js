@@ -15,21 +15,21 @@ const userSchema = z.object({
     }).min(1).max(100),
     correoInstitucional: z.string({
         invalid_type_error: 'El correo institucional debe ser un string',
-    }).min(1).max(100).nullable().optional(),
+    }).max(100).nullable().optional(),
     contrasena: z.string({
         invalid_type_error: 'La contraseña debe ser un string',
         required_error: 'La contraseña es requerida'
     }).min(4).max(250),
-    telefono: z.number().int({
+    telefono: z.string({
         invalid_type_error: 'El telefono debe ser un numero entero',
         required_error: 'El telefono es requerido'
-    }).positive(),
-    telefono2: z.number().int({
+    }).min(1).max(12),
+    telefono2: z.string({
         invalid_type_error: 'La cedula o carnet debe ser un numero entero',
-    }).positive().nullable().optional(),
+    }).max(12).nullable().optional(),
     direccion: z.string({
         invalid_type_error: 'La direccion debe ser un string',
-    }).min(1).max(200).nullable().optional(),
+    }).max(200).nullable().optional(),
     idRol:  z.number().int({
         invalid_type_error: 'El idRol debe ser un numero entero',
         required_error: 'El idRol es requerido'

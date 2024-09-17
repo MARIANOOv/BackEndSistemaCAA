@@ -8,8 +8,11 @@ import {stateRouter} from "./routes/stateRouter.js";
 import {userRouter} from "./routes/userRouter.js";
 import {assetRouter} from "./routes/assetRouter.js";
 import {applicationRouter} from "./routes/applicationRouter.js";
+import cors from 'cors';
+
 
 const app = express();
+app.use(cors({origin: '*'}));
 app.use(express.json());
 app.disable('x-powered-by');
 
@@ -24,6 +27,7 @@ app.use('/states', stateRouter);
 app.use('/users', userRouter);
 app.use('/assets', assetRouter);
 app.use('/applications', applicationRouter);
+
 
 const PORT = process.env.PORT ?? 3000;
 

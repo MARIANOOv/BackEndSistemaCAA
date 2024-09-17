@@ -1,4 +1,4 @@
-GET localhost:3000/users/
+GET localhost:3000/users
 
 ###
 POST http://localhost:3000/users
@@ -17,9 +17,9 @@ Content-Type: application/json
 DELETE http://localhost:3000/users/123456710
 
 ###
-PATCH http://localhost:3000/users/123456789
+PATCH http://localhost:3000/users/123456711
 Content-Type: application/json
 
 {
-  "nombre": "Brandon"
+  "correoEmail": "Brandon@gmail.com"
 }

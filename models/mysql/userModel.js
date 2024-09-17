@@ -9,7 +9,21 @@ export class userModel {
 
     static async getAll () {
         const [users] = await connection.query(
-            'SELECT * FROM usuario',
+            `SELECT 
+        u.CedulaCarnet,
+        u.Nombre,
+        u.CorreoEmail,
+        u.Contrasena,
+        u.Telefono,
+        u.Telefono2,
+        u.Direccion,
+        u.CorreoInstitucional,
+        r.nombre AS NombreRol
+        FROM 
+            usuario u
+        JOIN 
+            rol r ON u.idRol = r.idRol;
+`,
         )
         return users
     }
@@ -171,7 +185,7 @@ export class userModel {
 
             return updatedUser[0];
         } catch (error) {
-            throw new Error("Error al actualizar usuario");
+            throw new Error(error);
         }
     }
 
