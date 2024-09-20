@@ -36,9 +36,6 @@ export class RoomController {
 
     static async create(req, res) {
 
-        // Validar los campos de req.body
-
-
         // Obtener el buffer de la imagen (blob) desde req.file
         const imagen = req.file ? req.file.buffer : null;
 
@@ -52,6 +49,11 @@ export class RoomController {
                 estado: req.body.estado === 'true' || req.body.estado === '1', // Convertir estado a booleano
             }
         });
+
+        const result = validateRoomUpdate(newRoom)
+        if (result.success === false) {
+            return res.status(400).json({error: JSON.parse(result.error.message)})
+        }
 
         if (newRoom === false) return res.status(409).json({message: 'Sala con ese nombre ya existe'});
         res.status(201).json(newRoom);
@@ -67,14 +69,36 @@ export class RoomController {
     }
 
     static async update(req, res) {
-        const result = validateRoomUpdate(req.body)
-        if (result.success === false) {
-            return res.status(400).json({error: JSON.parse(result.error.message)})
-        }
+        try {
+            // Si hay archivos (por ejemplo, imagen), agregarlos al cuerpo de la solicitud
+            let updateData = req.body;
+            if (req.file) {
+                updateData.imagen = req.file.buffer;  // O req.file.path si guardas la imagen en el sistema de archivos
+            }
 
-        const {id} = req.params
-        const updatedRoom = await RoomModel.update({id, input: req.body})
-        if(updatedRoom) return res.json(updatedRoom)
-        res.status(404).json({message: 'Sala no actualizada'})
+            if (updateData.estado !== undefined) {
+                updateData.estado = updateData.estado === 'true' || updateData.estado === '1';
+            }
+
+            // Validar los datos de la sala
+            const result = validateRoomUpdate(updateData);
+            if (result.success === false) {
+                return res.status(400).json({ error: JSON.parse(result.error.message) });
+            }
+
+            const { id } = req.params;
+
+            // Actualizar la sala en la base de datos
+            const updatedRoom = await RoomModel.update({ id, input: updateData });
+            if (updatedRoom) {
+                return res.json(updatedRoom);
+            }
+
+            res.status(404).json({ message: 'Sala no actualizada' });
+        } catch (error) {
+            console.error('Error al actualizar la sala:', error);
+            res.status(500).json({ message: 'Error interno del servidor' });
+        }
     }
+
 }

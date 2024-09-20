@@ -22,7 +22,6 @@ const upload = multer({ storage });
 
 // Usa 'upload.single('imagen')' en la ruta de creación de salas para manejar la imagen
 app.use('/rooms', upload.single('imagen'), roomRouter);
-
 app.use('/cubicles', cubicleRouter);
 app.use('/resources', resourceRouter);
 app.use('/roles', roleRouter);
