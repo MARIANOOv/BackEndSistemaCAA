@@ -1,10 +1,6 @@
 import z from 'zod'
 
 const roomSchema = z.object({
-    imagen: z.string({
-        invalid_type_error: 'La imagen debe ser un string',
-        required_error: 'La imagen es requerida'
-    }).min(1).max(255),
     nombre: z.string({
         invalid_type_error: 'El nombre debe ser un string',
         required_error: 'El nombre es requerido'
@@ -15,7 +11,7 @@ const roomSchema = z.object({
     }).min(1).max(250),
     restricciones: z.string({
         invalid_type_error: 'Las restricciones deben ser un string'
-    }).min(1).max(250).nullable().optional(),
+    }).max(250).nullable().optional(),
     estado: z.boolean({
         invalid_type_error: 'El estado debe ser un booleano',
         required_error: 'El estado es requerido'

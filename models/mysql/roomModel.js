@@ -25,39 +25,38 @@ export class RoomModel {
         return room[0]
     }
 
-    static async create ({ input }) {
+    static async create({ input }) {
         const {
-            imagen,
+            imagen, // Este es el buffer (blob) de la imagen
             nombre,
             descripcion,
             restricciones,
             estado
-        } = input
-        try {
+        } = input;
 
+        try {
             const [result] = await connection.query(
                 'SELECT nombre FROM sala WHERE Nombre = ?',
                 [nombre]
-            )
+            );
 
             if (result.length > 0) {
-                return false
+                return false;
             }
 
             await connection.query(
                 'INSERT INTO sala (Imagen, Nombre, Descripcion, Restricciones, Estado) VALUES (?, ?, ?, ?, ?)',
                 [imagen, nombre, descripcion, restricciones, estado]
-            )
-        }
-        catch (error) {
-            throw new Error("Error al crear la sala")
+            );
+        } catch (error) {
+            throw new Error(error);
         }
 
         const [room] = await connection.query(
             `SELECT *
              FROM sala WHERE idSala = LAST_INSERT_ID();`
-        )
-        return room[0]
+        );
+        return room[0];
     }
 
     static async delete ({ id }) {
