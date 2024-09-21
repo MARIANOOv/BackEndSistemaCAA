@@ -16,7 +16,7 @@ const reservationSchema = z.object({
   }).positive(),
   observaciones: z.string({
     invalid_type_error: 'Las observaciones deben ser un string',
-  }).min(1).max(250).nullable().optional(),
+  }).max(250).nullable().optional(),
   refrigerio: z.boolean({
     invalid_type_error: 'El refrigerio debe ser un boleano',
   }).nullable().optional(),

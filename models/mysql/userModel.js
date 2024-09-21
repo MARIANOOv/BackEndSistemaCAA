@@ -18,7 +18,8 @@ export class userModel {
         u.Telefono2,
         u.Direccion,
         u.CorreoInstitucional,
-        r.nombre AS NombreRol
+        r.nombre AS NombreRol,
+        r.idRol AS idRol
         FROM 
             usuario u
         JOIN 
