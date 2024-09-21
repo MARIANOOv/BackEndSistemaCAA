@@ -1,5 +1,6 @@
 import {userModel} from '../models/mysql/userModel.js';
 import {validateUser, validateUserUpdate} from '../schemas/userSchema.js';
+import jwt from 'jsonwebtoken';
 export class userController {
 
     static async getAll(req, res) {
@@ -42,5 +43,13 @@ export class userController {
         const updatedUser = await userModel.update({id, input: req.body})
         if(updatedUser) return res.json(updatedUser)
         res.status(404).json({message: 'Usuario no actualizado'})
+    }
+    static async login(req, res) {
+        const user = await userModel.login({input: req.body})
+        if(user){
+            const token = jwt.sign({id: user.CedulaCarnet,role:user.RolNombre}, 'OKDIJITOCUALQUIERCOSAQUEDIGAMARIANO', {expiresIn: '1d'})
+            return res.json(token)
+        }
+        res.status(404).json({message: 'Usuario no encontrado'})
     }
 }

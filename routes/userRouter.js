@@ -7,6 +7,7 @@ export const userRouter = Router();
 
 userRouter.get('/', userController.getAll)
 userRouter.post('/',userController.create)
+userRouter.post('/login',userController.login)
 
 userRouter.get('/:id',userController.getById)
 userRouter.delete('/:id',userController.delete)
