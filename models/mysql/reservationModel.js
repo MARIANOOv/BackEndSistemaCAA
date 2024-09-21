@@ -392,6 +392,7 @@ export class reservationModel {
         [fechaToDate, horaInicio, horaFin, idSala, idCubiculo, idUsuario, observaciones, refrigerio]
       )
 
+      console.log(idRecursos)
       if (Array.isArray(idRecursos) && idRecursos.length > 0) {
         const insertPromises = idRecursos.map(idRecurso => {
           return connection.query(
