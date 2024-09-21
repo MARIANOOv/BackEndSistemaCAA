@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise'
 import {DBConfig} from '../../DBConfig.js'
 import bcrypt from 'bcrypt'
-
+import {sendEmail} from "../../services/emailService.js";
 
 const connection = await mysql.createConnection(DBConfig)
 
@@ -28,6 +28,14 @@ export class userModel {
         )
         return users
     }
+
+    static async getAllEmails() {
+        const [emails] = await connection.query(
+            `SELECT CorreoEmail FROM usuario`
+        );
+        return emails;
+    }
+
     static async login ({ input }) {
         const { email, password } = input
         const [user] = await connection.query(
@@ -158,7 +166,7 @@ export class userModel {
             )
         }
         catch (error) {
-            throw new Error("Error al eliminar el usuario")
+            throw new Error(error)
         }
         return true
     }

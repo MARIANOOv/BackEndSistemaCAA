@@ -1,4 +1,4 @@
-GET localhost:3000/users
+GET localhost:3000/users/2021152632
 
 ###
 POST localhost:3000/users/login
@@ -14,16 +14,16 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "cedulaCarnet": 123456711,
-  "nombre": "Sigi",
-  "correoEmail": "sigierv439@gmail.com",
+  "cedulaCarnet": 2021152632,
+  "nombre": "Brandon",
+  "correoEmail": "brandonerv438@gmail.com",
   "contrasena": "123456",
-  "telefono": 123456711,
+  "telefono": "88578033",
   "idRol": 2
 }
 
 ###
-DELETE http://localhost:3000/users/123456710
+DELETE http://localhost:3000/users/2021067590
 
 ###
 PATCH http://localhost:3000/users/123456711

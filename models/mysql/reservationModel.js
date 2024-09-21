@@ -1,6 +1,7 @@
 import mysql from 'mysql2/promise'
 
 import { DBConfig } from '../../DBConfig.js'
+import {sendEmail} from "../../services/emailService.js";
 
 const connection = await mysql.createConnection(DBConfig)
 
@@ -66,6 +67,7 @@ export class reservationModel {
 
     return Object.values(reservationMap);
   }
+
 
   static async getById({ id }) {
     const [resources] = await connection.query(
@@ -392,6 +394,58 @@ export class reservationModel {
         [fechaToDate, horaInicio, horaFin, idSala, idCubiculo, idUsuario, observaciones, refrigerio]
       )
 
+      const [userDetails] = await connection.query(
+          'SELECT Nombre, CorreoEmail FROM Usuario WHERE CedulaCarnet = ?',
+          [idUsuario]
+      );
+
+      if (userDetails.length > 0) {
+        const { Nombre, CorreoEmail } = userDetails[0];
+
+        // Obtener los detalles de la reservación recién creada
+        const [reservation] = await connection.query(
+            `SELECT *
+         FROM reservacion WHERE idReservacion = LAST_INSERT_ID();`
+        );
+
+        // Enviar correo con los detalles de la reservación
+        const reservationDetails = reservation[0];
+        const emailSubject = 'Confirmación de Reservación';
+        const emailText = `
+      Hola ${Nombre},
+      
+      Se ha realizado una nueva reservación con los siguientes detalles:
+      Fecha: ${reservationDetails.Fecha}
+      Hora de Inicio: ${reservationDetails.HoraInicio}
+      Hora de Fin: ${reservationDetails.HoraFin}
+      Sala: ${idSala ? `Sala ${idSala}` : 'N/A'}
+      Cubículo: ${idCubiculo ? `Cubículo ${idCubiculo}` : 'N/A'}
+      Observaciones: ${observaciones || 'Ninguna'}
+    `;
+        const emailHtml = `
+      <h1>Confirmación de Reservación</h1>
+      <p>Hola <strong>${Nombre}</strong>,</p>
+      <p>Se ha realizado una nueva reservación con los siguientes detalles:</p>
+      <p><strong>Fecha:</strong> ${reservationDetails.Fecha}</p>
+      <p><strong>Hora de Inicio:</strong> ${reservationDetails.HoraInicio}</p>
+      <p><strong>Hora de Fin:</strong> ${reservationDetails.HoraFin}</p>
+      ${idSala ? `<p><strong>Sala:</strong> Sala ${idSala}</p>` : ''}
+      ${idCubiculo ? `<p><strong>Cubículo:</strong> Cubículo ${idCubiculo}</p>` : ''}
+      <p><strong>Observaciones:</strong> ${observaciones || 'Ninguna'}</p>
+    `;
+
+        console.log(CorreoEmail)
+        console.log(Nombre)
+        sendEmail(
+            CorreoEmail, // Usamos el correo del usuario obtenido de la base de datos
+            emailSubject,
+            emailText,
+            emailHtml
+        );
+      }
+
+
+
       console.log(idRecursos)
       if (Array.isArray(idRecursos) && idRecursos.length > 0) {
         const insertPromises = idRecursos.map(idRecurso => {
@@ -403,8 +457,9 @@ export class reservationModel {
         await Promise.all(insertPromises);
       }
     }
+
     catch (error) {
-      throw new Error("Error al crear la reservación");
+      throw new Error(error);
     }
 
     const [reservation] = await connection.query(

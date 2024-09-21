@@ -1,9 +1,7 @@
 import {userModel} from '../models/mysql/userModel.js';
 import {validateUser, validateUserUpdate} from '../schemas/userSchema.js';
 import jwt from 'jsonwebtoken';
-
-
-import 'dotenv/config';
+import {sendEmail} from "../services/emailService.js";
 
 export class userController {
 
@@ -55,5 +53,91 @@ export class userController {
             return res.json(token)
         }
         res.status(404).json({message: 'Usuario no encontrado'})
+    }
+    static async sendAllEmail(req, res) {
+        try {
+
+            const { asunto, descripcion } = req.body;
+
+
+            if (!asunto || !descripcion) {
+                return res.status(400).json({ message: 'Asunto y descripción son requeridos' });
+            }
+
+
+            const emails = await userModel.getAllEmails();
+
+
+            for (let i = 0; i < emails.length; i++) {
+                const { CorreoEmail } = emails[i];
+
+
+                const emailSubject = asunto;
+                const emailText = descripcion;
+                const emailHtml = `
+  <div style="padding: 20px; background-color: #f4f4f4;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px;">
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <!-- Contenedor del Logo Centrador -->
+          <table border="0" cellpadding="0" cellspacing="0" style="text-align: center;">
+            <tr>
+              <!-- Texto "TEC" -->
+              <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 36px; font-weight: bold;">
+                TEC
+              </td>
+              <!-- Línea Roja Separadora -->
+              <td style="width: 5px; background-color: #c1272d;"></td>
+              <!-- Texto "Tecnológico de Costa Rica" -->
+              <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 18px;">
+                Tecnológico<br>de Costa Rica
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <!-- Asunto -->
+          <h1 style="font-size: 24px; font-weight: bold; color: #333; margin: 0;">${asunto}</h1>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="padding: 10px 0;">
+          <!-- Descripción -->
+          <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
+            ${descripcion}
+          </p>
+        </td>
+      </tr>
+    </table>
+  </div>
+`;
+
+
+
+
+
+
+
+
+
+                // Enviar el correo electrónico
+                await sendEmail(
+                    CorreoEmail,  // Correo del usuario actual en la iteración
+                    emailSubject,  // Asunto del correo
+                    emailText,     // Texto plano del correo
+                    emailHtml      // HTML del correo
+                );
+            }
+
+            // Responder con éxito
+            res.json({ message: 'Correos enviados correctamente' });
+
+        } catch (error) {
+            // Manejo de errores
+            console.error(error);
+            res.status(500).json({ message: 'Error al enviar los correos' });
+        }
     }
 }
