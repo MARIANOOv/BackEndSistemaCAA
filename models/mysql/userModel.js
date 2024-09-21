@@ -18,7 +18,8 @@ export class userModel {
         u.Telefono2,
         u.Direccion,
         u.CorreoInstitucional,
-        r.nombre AS NombreRol
+        r.nombre AS NombreRol,
+        r.idRol AS idRol
         FROM 
             usuario u
         JOIN 
@@ -26,6 +27,26 @@ export class userModel {
 `,
         )
         return users
+    }
+    static async login ({ input }) {
+        const { email, password } = input
+        const [user] = await connection.query(
+            `SELECT u.Contrasena, u.CedulaCarnet, r.nombre AS RolNombre
+     FROM usuario u
+     JOIN rol r ON u.idRol = r.idRol
+     WHERE u.CorreoEmail = ? OR u.CorreoInstitucional = ?`,
+            [email, email]
+        )
+
+
+        if(user.length === 0) {
+            return null
+        }
+        const isValid = await bcrypt.compare(password, user[0].Contrasena)
+        if (!isValid) {
+            return null
+        }
+        return user[0]
     }
 
     static async getById ({ id }) {

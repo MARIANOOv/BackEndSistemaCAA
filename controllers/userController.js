@@ -14,17 +14,7 @@ export class userController {
     static async getById(req, res) {
         const {id} = req.params
         const user = await userModel.getById({id})
-        if(user) return res.status(200).json(user)
-        res.status(404).json({message: 'Usuario no encontrado'})
-    }
-
-    static async login(req, res) {
-        const user = await userModel.login({input: req.body})
-        if(user){
-            const token = jwt.sign({id: user.CedulaCarnet, role: user.Role}, process.env.JWT_SECRET, {expiresIn: '1d'})
-            return res.status(200).json({token})
-        }
-
+        if(user) return res.json(user)
         res.status(404).json({message: 'Usuario no encontrado'})
     }
 
@@ -57,5 +47,13 @@ export class userController {
         const updatedUser = await userModel.update({id, input: req.body})
         if(updatedUser) return res.json(updatedUser)
         res.status(404).json({message: 'Usuario no actualizado'})
+    }
+    static async login(req, res) {
+        const user = await userModel.login({input: req.body})
+        if(user){
+            const token = jwt.sign({id: user.CedulaCarnet,role:user.RolNombre}, 'OKDIJITOCUALQUIERCOSAQUEDIGAMARIANO', {expiresIn: '1d'})
+            return res.json(token)
+        }
+        res.status(404).json({message: 'Usuario no encontrado'})
     }
 }

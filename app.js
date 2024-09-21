@@ -8,6 +8,7 @@ import {stateRouter} from "./routes/stateRouter.js";
 import {userRouter} from "./routes/userRouter.js";
 import {assetRouter} from "./routes/assetRouter.js";
 import {applicationRouter} from "./routes/applicationRouter.js";
+import {reservationRouter} from "./routes/reservationRouter.js";
 import cors from 'cors';
 import multer from 'multer';
 import { reservationRouter } from './routes/reservationRouter.js' // Importa multer
