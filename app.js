@@ -9,7 +9,8 @@ import {userRouter} from "./routes/userRouter.js";
 import {assetRouter} from "./routes/assetRouter.js";
 import {applicationRouter} from "./routes/applicationRouter.js";
 import cors from 'cors';
-import multer from 'multer'; // Importa multer
+import multer from 'multer';
+import { reservationRouter } from './routes/reservationRouter.js' // Importa multer
 
 const app = express();
 app.use(cors({origin: '*'}));
@@ -32,6 +33,7 @@ app.use('/states', stateRouter);
 app.use('/users', userRouter);
 app.use('/assets', assetRouter);
 app.use('/applications', applicationRouter);
+app.use('/reservations', reservationRouter);
 
 const PORT = process.env.PORT ?? 3000;
 

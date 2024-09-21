@@ -1,5 +1,10 @@
 import {userModel} from '../models/mysql/userModel.js';
 import {validateUser, validateUserUpdate} from '../schemas/userSchema.js';
+import jwt from 'jsonwebtoken';
+
+
+import 'dotenv/config';
+
 export class userController {
 
     static async getAll(req, res) {
@@ -9,7 +14,17 @@ export class userController {
     static async getById(req, res) {
         const {id} = req.params
         const user = await userModel.getById({id})
-        if(user) return res.json(user)
+        if(user) return res.status(200).json(user)
+        res.status(404).json({message: 'Usuario no encontrado'})
+    }
+
+    static async login(req, res) {
+        const user = await userModel.login({input: req.body})
+        if(user){
+            const token = jwt.sign({id: user.CedulaCarnet, role: user.Role}, process.env.JWT_SECRET, {expiresIn: '1d'})
+            return res.status(200).json({token})
+        }
+
         res.status(404).json({message: 'Usuario no encontrado'})
     }
 
