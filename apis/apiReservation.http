@@ -17,18 +17,18 @@ POST http://localhost:3000/reservations
 Content-Type: application/json
 
 {
-  "fecha": "2400-4-29",
-  "horaInicio": "7:00:00",
-  "horaFin": "8:00:00",
-  "idSala": 6 ,
-  "idUsuario": 2021080289,
-  "observaciones": "Quiero papas",
-  "refrigerio": true,
-  "idRecursos": [1,2]
+  "fecha": "2024-11-20",
+  "horaInicio": "10:00:00",
+  "horaFin": "12:00:00",
+  "idSala": 17 ,
+  "idUsuario": 2021152632,
+  "observaciones": "Me gustaria que mariano me de un besito cada 5 minutos",
+  "refrigerio": false,
+  "idRecursos": [1]
 }
 
 ###
-DELETE http://localhost:3000/reservations/12
+DELETE http://localhost:3000/reservations/26
 
 ###
 PATCH http://localhost:3000/reservations/10
