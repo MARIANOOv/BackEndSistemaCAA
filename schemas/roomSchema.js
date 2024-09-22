@@ -8,7 +8,7 @@ const roomSchema = z.object({
     descripcion: z.string({
         invalid_type_error: 'La descripcion debe ser un string',
         required_error: 'La descripcion es requerida'
-    }).min(1).max(250),
+    }).min(2).max(250),
     restricciones: z.string({
         invalid_type_error: 'Las restricciones deben ser un string'
     }).max(250).nullable().optional(),
