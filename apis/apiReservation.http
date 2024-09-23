@@ -23,12 +23,12 @@ Content-Type: application/json
   "idSala": 17 ,
   "idUsuario": 2021152632,
   "observaciones": "Me gustaria que mariano me de un besito cada 5 minutos",
-  "refrigerio": false,
+  "refrigerio": true,
   "idRecursos": [1]
 }
 
 ###
-DELETE http://localhost:3000/reservations/26
+DELETE http://localhost:3000/reservations/33
 
 ###
 PATCH http://localhost:3000/reservations/10

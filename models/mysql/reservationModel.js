@@ -1,7 +1,8 @@
 import mysql from 'mysql2/promise'
-
 import { DBConfig } from '../../DBConfig.js'
 import {sendEmail} from "../../services/emailService.js";
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const connection = await mysql.createConnection(DBConfig)
 
@@ -429,20 +430,58 @@ export class reservationModel {
       Cubículo: ${idCubiculo ? `Cubículo ${idCubiculo}` : 'N/A'}
       Observaciones: ${observaciones || 'Ninguna'}
     `;
-        const emailHtml = `
-      <h1>Confirmación de Reservación</h1>
-      <p>Hola <strong>${Nombre}</strong>,</p>
-      <p>Se ha realizado una nueva reservación con los siguientes detalles:</p>
-      <p><strong>Fecha:</strong> ${reservationDetails.Fecha}</p>
-      <p><strong>Hora de Inicio:</strong> ${reservationDetails.HoraInicio}</p>
-      <p><strong>Hora de Fin:</strong> ${reservationDetails.HoraFin}</p>
-      ${idSala ? `<p><strong>Sala:</strong> Sala ${idSala}</p>` : ''}
-      ${idCubiculo ? `<p><strong>Cubículo:</strong> Cubículo ${idCubiculo}</p>` : ''}
-      <p><strong>Observaciones:</strong> ${observaciones || 'Ninguna'}</p>
-    `;
 
-        console.log(CorreoEmail)
-        console.log(Nombre)
+        const formattedDate = format(new Date(reservationDetails.Fecha), 'EEEE, dd MMMM yyyy', { locale: es });
+
+        const emailHtml = `
+<div style="padding: 20px; background-color: #f4f4f4;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px;">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <!-- Contenedor del Logo Centrador -->
+        <table border="0" cellpadding="0" cellspacing="0" style="text-align: center;">
+          <tr>
+            <!-- Texto "TEC" -->
+            <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 36px; font-weight: bold;">
+              TEC
+            </td>
+            <!-- Línea Roja Separadora -->
+            <td style="width: 5px; background-color: #c1272d;"></td>
+            <!-- Texto "Tecnológico de Costa Rica" -->
+            <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 18px;">
+              Tecnológico<br>de Costa Rica
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <!-- Asunto -->
+        <h1 style="font-size: 24px; font-weight: bold; color: #333; margin: 0;">${emailSubject}</h1>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 10px 0;">
+        <!-- Detalles de la reservación -->
+        <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
+          Se ha realizado una nueva reservación con los siguientes detalles:
+        </p>
+        <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
+          <strong>Fecha:</strong> ${formattedDate}<br>
+          <strong>Hora de Inicio:</strong> ${reservationDetails.HoraInicio}<br>
+          <strong>Hora de Fin:</strong> ${reservationDetails.HoraFin}<br>
+          ${idSala ? `<strong>Sala:</strong> Sala ${idSala}<br>` : ''}
+          ${idCubiculo ? `<strong>Cubículo:</strong> Cubículo ${idCubiculo}<br>` : ''}
+          <strong>Observaciones:</strong> ${observaciones || 'Ninguna'}<br>
+          ${refrigerio ? '<strong>Refrigerio:</strong> Sí (Según disponibilidad)' : ''}
+        </p>
+      </td>
+    </tr>
+  </table>
+</div>
+`;
+
         sendEmail(
             CorreoEmail, // Usamos el correo del usuario obtenido de la base de datos
             emailSubject,
