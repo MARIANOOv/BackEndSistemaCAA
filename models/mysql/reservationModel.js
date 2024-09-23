@@ -265,7 +265,7 @@ export class reservationModel {
   static async getByUserId({ userId }) {
 
     const [reservations] = await connection.query(
-      ` SELECT 
+        ` SELECT 
         r.idReservacion,
         r.Fecha,
         r.HoraInicio,
@@ -274,17 +274,19 @@ export class reservationModel {
         r.idCubiculo,
         r.idUsuario,
         rr.idRecurso,
-        rec.nombre AS NombreRecurso
+        rec.nombre AS NombreRecurso,
+        r.Observaciones,
+        r.Refrigerio
     FROM 
         reservacion r
-    JOIN 
+    LEFT JOIN 
         reservacion_recursos rr ON r.idReservacion = rr.idReservacion
-    JOIN 
+    LEFT JOIN 
         recursos rec ON rr.idRecurso = rec.idRecursos
     WHERE 
         r.idUsuario = ?;`,
-      [userId]
-    )
+        [userId]
+    );
 
     const reservationMap = {};
 
@@ -299,6 +301,8 @@ export class reservationModel {
         idUsuario,
         idRecurso,
         NombreRecurso,
+        Observaciones,
+        Refrigerio,
       } = row;
 
       // Si la reservación no está en el mapa, agregarla
@@ -311,12 +315,14 @@ export class reservationModel {
           idSala,
           idCubiculo,
           idUsuario,
+          Observaciones: idSala ? Observaciones : null, // Solo si es sala
+          Refrigerio: idSala ? Refrigerio : null, // Solo si es sala
           recursos: [], // Iniciar un array para los recursos
         };
       }
 
-      // Agregar el recurso a la lista de recursos de la reservación
-      if (idRecurso) {
+      // Agregar el recurso a la lista de recursos de la reservación, solo si es una sala
+      if (idSala && idRecurso) {
         reservationMap[idReservacion].recursos.push({
           idRecurso,
           NombreRecurso,
@@ -326,6 +332,7 @@ export class reservationModel {
 
     return Object.values(reservationMap);
   }
+
 
 
   static async create ({ input }) {
@@ -496,7 +503,8 @@ export class reservationModel {
       horaInicio,
       horaFin,
       observaciones,
-      idRecursos
+      idRecursos,
+      refrigerio
     } = input
     try {
       const [horaIni] = await connection.query(
@@ -524,9 +532,10 @@ export class reservationModel {
            SET Fecha = COALESCE(?, Fecha),
            HoraInicio = COALESCE(?, HoraInicio),
            HoraFin = COALESCE(?, HoraFin),
-           Observaciones = COALESCE(?, Observaciones)
+           Observaciones = COALESCE(?, Observaciones),
+           Refrigerio = COALESCE(?, Refrigerio)
            WHERE idReservacion = ?;`,
-        [fecha, horaInicio,horaFin, observaciones,id]
+        [fecha, horaInicio,horaFin, observaciones,refrigerio,id]
       );
       if (result.affectedRows === 0) {
         throw new Error('No se encontro la reservacion con ese id');
