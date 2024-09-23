@@ -196,9 +196,9 @@ export class reservationModel {
         rec.nombre AS NombreRecurso
     FROM 
         reservacion r
-    JOIN 
+    LEFT JOIN 
         reservacion_recursos rr ON r.idReservacion = rr.idReservacion
-    JOIN 
+    LEFT JOIN 
         recursos rec ON rr.idRecurso = rec.idRecursos
     WHERE 
         r.idSala = ?;`,
@@ -350,50 +350,7 @@ export class reservationModel {
     } = input
 
     try {
-      //Ver si la reservación ya existe en esa fecha, horas y sala
-      if(idSala != null) {
-        const [horaIniS] = await connection.query(
-          'SELECT HoraInicio FROM reservacion WHERE HoraInicio = ? AND Fecha = ? AND idSala = ?',
-          [horaInicio, fecha, idSala]
-        )
 
-        if (horaIniS.length > 0) {
-          return false
-        }
-
-        const [horaFinalS] = await connection.query(
-          'SELECT HoraFin FROM reservacion WHERE HoraFin = ? AND Fecha = ? AND idSala = ?',
-          [horaFin, fecha, idSala]
-        )
-
-        if (horaFinalS.length > 0) {
-          return false
-        }
-      }
-
-      if(idCubiculo != null) {
-        //Ver si la reservación ya existe en esa fecha, horas y cubiculo
-        const [horaIniC] = await connection.query(
-          'SELECT HoraInicio FROM reservacion WHERE HoraInicio = ? AND Fecha = ? AND idCubiculo = ?',
-          [horaInicio, fecha, idCubiculo]
-        )
-
-        if (horaIniC.length > 0) {
-          console.log("1")
-          return false
-        }
-
-        const [horaFinalC] = await connection.query(
-          'SELECT HoraFin FROM reservacion WHERE HoraFin = ? AND Fecha = ? AND idCubiculo = ?',
-          [horaFin, fecha, idCubiculo]
-        )
-
-        if (horaFinalC.length > 0) {
-          console.log("2")
-
-          return false
-        }
-      }
 
       const fechaToDate = new Date(fecha)
 
