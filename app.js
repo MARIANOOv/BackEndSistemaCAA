@@ -10,18 +10,18 @@ import {assetRouter} from "./routes/assetRouter.js";
 import {applicationRouter} from "./routes/applicationRouter.js";
 import {reservationRouter} from "./routes/reservationRouter.js";
 import cors from 'cors';
-import multer from 'multer'; // Importa multer
+import multer from 'multer';
 
 const app = express();
 app.use(cors({origin: '*'}));
 app.use(express.json());
 app.disable('x-powered-by');
 
-// Configura multer para manejar la subida de archivos
-const storage = multer.memoryStorage(); // Usar memoryStorage para almacenar el archivo en la memoria
+
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Usa 'upload.single('imagen')' en la ruta de creación de salas para manejar la imagen
+
 app.use('/rooms', upload.single('imagen'), roomRouter);
 app.use('/cubicles', cubicleRouter);
 app.use('/resources', resourceRouter);

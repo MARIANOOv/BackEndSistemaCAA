@@ -43,7 +43,7 @@ export class reservationModel {
         NombreRecurso,
       } = row;
 
-      // Si la reservación no está en el mapa, agregarla
+
       if (!reservationMap[idReservacion]) {
         reservationMap[idReservacion] = {
           idReservacion,
@@ -53,11 +53,11 @@ export class reservationModel {
           idSala,
           idCubiculo,
           idUsuario,
-          recursos: [], // Iniciar un array para los recursos
+          recursos: [],
         };
       }
 
-      // Agregar el recurso a la lista de recursos de la reservación
+
       if (idRecurso) {
         reservationMap[idReservacion].recursos.push({
           idRecurso,
@@ -94,10 +94,10 @@ export class reservationModel {
     );
 
     if (resources.length === 0) {
-      return null; // Si no se encuentra la reservación, retornar null
+      return null;
     }
 
-    // Agrupar los recursos en un solo objeto de reservación
+
     const reservacion = {
       idReservacion: resources[0].idReservacion,
       Fecha: resources[0].Fecha,
@@ -109,7 +109,7 @@ export class reservationModel {
       recursos: resources.map((row) => ({
         idRecurso: row.idRecurso,
         NombreRecurso: row.NombreRecurso,
-      })).filter(recurso => recurso.idRecurso !== null) // Filtrar si no hay recursos asociados
+      })).filter(recurso => recurso.idRecurso !== null)
     };
 
     return reservacion;
@@ -155,7 +155,7 @@ export class reservationModel {
         NombreRecurso,
       } = row;
 
-      // Si la reservación no está en el mapa, agregarla
+
       if (!reservationMap[idReservacion]) {
         reservationMap[idReservacion] = {
           idReservacion,
@@ -165,11 +165,11 @@ export class reservationModel {
           idSala,
           idCubiculo,
           idUsuario,
-          recursos: [], // Iniciar un array para los recursos
+          recursos: [],
         };
       }
 
-      // Agregar el recurso a la lista de recursos de la reservación
+
       if (idRecurso) {
         reservationMap[idReservacion].recursos.push({
           idRecurso,
@@ -220,7 +220,7 @@ export class reservationModel {
         NombreRecurso,
       } = row;
 
-      // Si la reservación no está en el mapa, agregarla
+
       if (!reservationMap[idReservacion]) {
         reservationMap[idReservacion] = {
           idReservacion,
@@ -230,11 +230,11 @@ export class reservationModel {
           idSala,
           idCubiculo,
           idUsuario,
-          recursos: [], // Iniciar un array para los recursos
+          recursos: [],
         };
       }
 
-      // Agregar el recurso a la lista de recursos de la reservación
+
       if (idRecurso) {
         reservationMap[idReservacion].recursos.push({
           idRecurso,
@@ -306,7 +306,7 @@ export class reservationModel {
         Refrigerio,
       } = row;
 
-      // Si la reservación no está en el mapa, agregarla
+
       if (!reservationMap[idReservacion]) {
         reservationMap[idReservacion] = {
           idReservacion,
@@ -316,13 +316,13 @@ export class reservationModel {
           idSala,
           idCubiculo,
           idUsuario,
-          Observaciones: idSala ? Observaciones : null, // Solo si es sala
-          Refrigerio: idSala ? Refrigerio : null, // Solo si es sala
-          recursos: [], // Iniciar un array para los recursos
+          Observaciones: idSala ? Observaciones : null,
+          Refrigerio: idSala ? Refrigerio : null,
+          recursos: [],
         };
       }
 
-      // Agregar el recurso a la lista de recursos de la reservación, solo si es una sala
+
       if (idSala && idRecurso) {
         reservationMap[idReservacion].recursos.push({
           idRecurso,
@@ -367,13 +367,13 @@ export class reservationModel {
       if (userDetails.length > 0) {
         const { Nombre, CorreoEmail } = userDetails[0];
 
-        // Obtener los detalles de la reservación recién creada
+
         const [reservation] = await connection.query(
             `SELECT *
          FROM reservacion WHERE idReservacion = LAST_INSERT_ID();`
         );
 
-        // Enviar correo con los detalles de la reservación
+
         const reservationDetails = reservation[0];
         const emailSubject = 'Confirmación de Reservación';
         const emailText = `
@@ -440,7 +440,7 @@ export class reservationModel {
 `;
 
         sendEmail(
-            CorreoEmail, // Usamos el correo del usuario obtenido de la base de datos
+            CorreoEmail,
             emailSubject,
             emailText,
             emailHtml
@@ -537,7 +537,7 @@ export class reservationModel {
         throw new Error('No se encontro la reservacion con ese id');
       }
 
-      // Obtener los recursos actuales de la reservación
+
       const [currentResources] = await connection.query(
         `SELECT idRecurso FROM reservacion_recursos WHERE idReservacion = ?;`,
         [id]
@@ -545,17 +545,17 @@ export class reservationModel {
 
       const currentResourceIds = currentResources.map((resource) => resource.idRecurso);
 
-      // Recursos a eliminar: los que están en la base de datos pero no en la lista de idRecursos proporcionada
+
       const resourcesToDelete = currentResourceIds.filter(
         (idRecurso) => !idRecursos.includes(idRecurso)
       );
 
-      // Recursos a agregar: los que están en la lista de idRecursos proporcionada pero no en la base de datos
+
       const resourcesToAdd = idRecursos.filter(
         (idRecurso) => !currentResourceIds.includes(idRecurso)
       );
 
-      // Eliminar recursos no deseados
+
       if (resourcesToDelete.length > 0) {
         await connection.query(
           `DELETE FROM reservacion_recursos WHERE idReservacion = ? AND idRecurso IN (?);`,
@@ -563,7 +563,7 @@ export class reservationModel {
         );
       }
 
-      // Agregar nuevos recursos
+
       if (resourcesToAdd.length > 0) {
         const insertPromises = resourcesToAdd.map((idRecurso) => {
           return connection.query(

@@ -27,7 +27,7 @@ export class RoomModel {
 
     static async create({ input }) {
         const {
-            imagen, // Este es el buffer (blob) de la imagen
+            imagen,
             nombre,
             descripcion,
             restricciones,

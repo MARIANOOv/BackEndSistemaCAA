@@ -82,7 +82,7 @@ export class userModel {
             idRol
         } = input
         try {
-            //Cedula o carnet no repetido
+
             const [resultCedula] = await connection.query(
                 'SELECT cedulaCarnet FROM usuario WHERE CedulaCarnet = ?',
                 [cedulaCarnet]
@@ -92,7 +92,7 @@ export class userModel {
                 return false
             }
 
-            //Correo Email no repetido
+
             const [resultEmail] = await connection.query(
                 'SELECT correoEmail FROM usuario WHERE CorreoEmail = ?',
                 [correoEmail]
@@ -101,7 +101,7 @@ export class userModel {
             if (resultEmail.length > 0) {
                 return false
             }
-            //Telefono no repetido
+
             const [resultTelefono] = await connection.query(
                 'SELECT telefono FROM usuario WHERE Telefono = ?',
                 [telefono]
@@ -111,7 +111,7 @@ export class userModel {
                 return false
             }
 
-            //Validar que el rol exista
+
             const [resultRole] = await connection.query(
                 'SELECT idRol FROM rol WHERE idRol = ?',
                 [idRol]
@@ -166,7 +166,7 @@ export class userModel {
         } = input
         try {
 
-            //Correo Email no repetido
+
             const [resultEmail] = await connection.query(
                 'SELECT correoEmail FROM usuario WHERE CorreoEmail = ?',
                 [correoEmail]
@@ -174,7 +174,7 @@ export class userModel {
             if (resultEmail.length > 0) {
                 return false
             }
-            //Telefono no repetido
+
             const [resultTelefono] = await connection.query(
                 'SELECT telefono FROM usuario WHERE Telefono = ?',
                 [telefono]
