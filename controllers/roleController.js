@@ -6,6 +6,7 @@ export class roleController {
         const roles = await roleModel.getAll()
         res.json(roles)
     }
+
     static async getById(req, res) {
         const {id} = req.params
         const role = await roleModel.getById({id})
@@ -42,5 +43,12 @@ export class roleController {
         const updatedRole = await roleModel.update({id, input: req.body})
         if(updatedRole) return res.json(updatedRole)
         res.status(404).json({message: 'Rol no actualizado'})
+    }
+
+    static async getByRoleName(req, res) {
+        const {nombre} = req.params
+        const role = await roleModel.getByRoleName({nombre})
+        if(role) return res.json(role)
+        res.status(404).json({message: 'Rol no encontrado'})
     }
 }

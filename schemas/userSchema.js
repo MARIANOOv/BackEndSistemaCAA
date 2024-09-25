@@ -22,8 +22,7 @@ const userSchema = z.object({
     }).min(4).max(250),
     telefono: z.string({
         invalid_type_error: 'El telefono debe ser un numero entero',
-        required_error: 'El telefono es requerido'
-    }).min(1).max(12),
+    }).max(12).nullable().optional(),
     telefono2: z.string({
         invalid_type_error: 'La cedula o carnet debe ser un numero entero',
     }).max(12).nullable().optional(),
