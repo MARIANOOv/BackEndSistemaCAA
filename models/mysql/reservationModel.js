@@ -22,9 +22,9 @@ export class reservationModel {
     rec.nombre AS NombreRecurso
     FROM 
         reservacion r
-    JOIN 
+    LEFT JOIN 
         reservacion_recursos rr ON r.idReservacion = rr.idReservacion
-    JOIN 
+    LEFT JOIN 
         recursos rec ON rr.idRecurso = rec.idRecursos;`
     )
 
@@ -406,7 +406,7 @@ export class reservationModel {
             <td style="width: 5px; background-color: #c1272d;"></td>
             <!-- Texto "Tecnológico de Costa Rica" -->
             <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 18px;">
-              Tecnológico<br>de Costa Rica
+              Centro Academico<br>de Alajuela
             </td>
           </tr>
         </table>
@@ -430,7 +430,7 @@ export class reservationModel {
           <strong>Hora de Fin:</strong> ${reservationDetails.HoraFin}<br>
           ${idSala ? `<strong>Sala:</strong> Sala ${idSala}<br>` : ''}
           ${idCubiculo ? `<strong>Cubículo:</strong> Cubículo ${idCubiculo}<br>` : ''}
-          <strong>Observaciones:</strong> ${observaciones || 'Ninguna'}<br>
+          ${observaciones ? `<strong>Observaciones:</strong> ${observaciones}<br>` : ''} 
           ${refrigerio ? '<strong>Refrigerio:</strong> Sí (Según disponibilidad)' : ''}
         </p>
       </td>
@@ -449,7 +449,7 @@ export class reservationModel {
 
 
 
-      console.log(idRecursos)
+
       if (Array.isArray(idRecursos) && idRecursos.length > 0) {
         const insertPromises = idRecursos.map(idRecurso => {
           return connection.query(

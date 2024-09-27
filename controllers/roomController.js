@@ -34,6 +34,13 @@ export class RoomController {
         res.status(404).json({message: 'Sala no encontrada'})
     }
 
+    static async getNameById(req, res) {
+        const {id} = req.params
+        const room = await RoomModel.getNameById({id})
+        if(room) return res.json(room)
+        res.status(404).json({message: 'Sala no encontrada'})
+    }
+
     static async create(req, res) {
 
 
