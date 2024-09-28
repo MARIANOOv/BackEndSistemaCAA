@@ -108,4 +108,16 @@ export class RoomController {
         }
     }
 
+    static async lock(req, res) {
+        const updatedRooms = await RoomModel.lock()
+        if(updatedRooms) return res.json(updatedRooms)
+        res.status(404).json({message: 'Salas no actualizadas'})
+    }
+
+    static async unLock(req, res) {
+        const updatedRooms = await RoomModel.unLock()
+        if(updatedRooms) return res.json(updatedRooms)
+        res.status(404).json({message: 'Salas no actualizadas'})
+    }
+
 }

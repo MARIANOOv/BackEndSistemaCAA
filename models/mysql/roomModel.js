@@ -129,4 +129,38 @@ export class RoomModel {
         }
     }
 
+    static async lock() {
+        try {
+
+            const [result] = await connection.query(
+                `UPDATE sala
+                 SET Estado = 0;`
+            );
+            const [updatedRooms] = await connection.query(
+                `SELECT *
+                    FROM sala;`,
+            );
+            return updatedRooms;
+        } catch (error) {
+            throw new Error("Error al actualizar la sala");
+        }
+    }
+
+    static async unLock() {
+        try {
+
+            const [result] = await connection.query(
+                `UPDATE sala
+                 SET Estado = 1;`
+            );
+            const [updatedRooms] = await connection.query(
+                `SELECT *
+                    FROM sala;`,
+            );
+            return updatedRooms;
+        } catch (error) {
+            throw new Error("Error al actualizar la sala");
+        }
+    }
+
 }

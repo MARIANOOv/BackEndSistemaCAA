@@ -5,17 +5,21 @@ POST http://localhost:3000/cubicles
 Content-Type: application/json
 
 {
-  "nombre": "Cubiculo 1",
-  "ventana": false
+  "nombre": "Cubiculo 2",
+  "ventana": false,
+  "estado": true
 }
 
 ###
-DELETE http://localhost:3000/cubicles/1
+DELETE http://localhost:3000/cubicles/15
 
 ###
-PATCH http://localhost:3000/cubicles/2
+PATCH http://localhost:3000/cubicles/14
 Content-Type: application/json
 
 {
   "nombre": "Cubiculo 1"
 }
+
+###
+PATCH http://localhost:3000/cubicles/cubicleLock
