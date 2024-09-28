@@ -66,7 +66,7 @@ export class assetModel {
                 return false
             }
 
-            //Validacion que el idEstado exista
+
             const [resultEstado] = await connection.query(
                 'SELECT idEstado FROM estado WHERE idEstado = ?',
                 [idEstado]
@@ -75,7 +75,7 @@ export class assetModel {
                 return false
             }
 
-            //Validacion que el idCategoria exista
+
             const [resultCategoria] = await connection.query(
                 'SELECT idCategoria FROM categoria WHERE idCategoria = ?',
                 [idCategoria]
@@ -132,7 +132,7 @@ export class assetModel {
             console.log(idEstado)
 
             if(idEstado != null){
-                //Validacion que el idEstado exista
+
                 const [existEstado] = await connection.query(
                     'SELECT idEstado FROM estado WHERE idEstado = ?',
                     [idEstado]

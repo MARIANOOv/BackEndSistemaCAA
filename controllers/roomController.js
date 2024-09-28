@@ -6,14 +6,14 @@ export class RoomController {
         try {
             const rooms = await RoomModel.getAll();
 
-            // Convertir los blobs a base64
+
             const roomsWithBase64Images = rooms.map((room) => {
                 if (room.Imagen) {
-                    // Convertir el blob a base64
+
                     const base64Image = room.Imagen.toString('base64');
                     return {
                         ...room,
-                        Imagen: base64Image // Aquí asignamos la imagen convertida a base64
+                        Imagen: base64Image
                     };
                 } else {
                     return room;
@@ -34,19 +34,26 @@ export class RoomController {
         res.status(404).json({message: 'Sala no encontrada'})
     }
 
+    static async getNameById(req, res) {
+        const {id} = req.params
+        const room = await RoomModel.getNameById({id})
+        if(room) return res.json(room)
+        res.status(404).json({message: 'Sala no encontrada'})
+    }
+
     static async create(req, res) {
 
-        // Obtener el buffer de la imagen (blob) desde req.file
+
         const imagen = req.file ? req.file.buffer : null;
 
-        // Crear el objeto de la sala con todos los datos incluyendo la imagen
+
         const newRoom = await RoomModel.create({
             input: {
-                imagen, // Aquí pasamos el blob de la imagen
+                imagen,
                 nombre: req.body.nombre,
                 descripcion: req.body.descripcion,
                 restricciones: req.body.restricciones,
-                estado: req.body.estado === 'true' || req.body.estado === '1', // Convertir estado a booleano
+                estado: req.body.estado === 'true' || req.body.estado === '1',
             }
         });
 
@@ -70,17 +77,17 @@ export class RoomController {
 
     static async update(req, res) {
         try {
-            // Si hay archivos (por ejemplo, imagen), agregarlos al cuerpo de la solicitud
+
             let updateData = req.body;
             if (req.file) {
-                updateData.imagen = req.file.buffer;  // O req.file.path si guardas la imagen en el sistema de archivos
+                updateData.imagen = req.file.buffer;
             }
 
             if (updateData.estado !== undefined) {
                 updateData.estado = updateData.estado === 'true' || updateData.estado === '1';
             }
 
-            // Validar los datos de la sala
+
             const result = validateRoomUpdate(updateData);
             if (result.success === false) {
                 return res.status(400).json({ error: JSON.parse(result.error.message) });
@@ -88,7 +95,7 @@ export class RoomController {
 
             const { id } = req.params;
 
-            // Actualizar la sala en la base de datos
+
             const updatedRoom = await RoomModel.update({ id, input: updateData });
             if (updatedRoom) {
                 return res.json(updatedRoom);

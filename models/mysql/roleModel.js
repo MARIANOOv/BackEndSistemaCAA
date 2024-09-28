@@ -108,4 +108,17 @@ export class roleModel {
         }
     }
 
+    static async getByRoleName({ nombre }) {
+        const [role] = await connection.query(
+          'SELECT * FROM rol WHERE LOWER(Nombre) = LOWER(?)',
+          [nombre]
+        );
+
+        if (role.length === 0) {
+            return null;
+        }
+
+        return role[0];
+    }
+
 }

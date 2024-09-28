@@ -36,7 +36,7 @@ export class applicationModel {
         } = input
         try {
 
-            //Validar que el usuario exista
+
             const [resultUser] = await connection.query(
                 'SELECT cedulaCarnet FROM usuario WHERE CedulaCarnet = ?',
                 [idUsuario]
@@ -45,7 +45,7 @@ export class applicationModel {
                 return false
             }
 
-            //Validar que el usuario exista
+
             const [resultAsset] = await connection.query(
                 'SELECT NumeroPlaca FROM activo WHERE NumeroPlaca = ?',
                 [idActivo]

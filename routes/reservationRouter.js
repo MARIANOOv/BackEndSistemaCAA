@@ -11,6 +11,7 @@ reservationRouter.get('/getbyDate/:date',reservationController.getByDate)
 reservationRouter.get('/getbyRoomId/:roomId',reservationController.getByRoomId)
 reservationRouter.get('/getbyCubicleId/:cubicleId',reservationController.getByCubicleId)
 reservationRouter.get('/getbyUserId/:userId',reservationController.getByUserId)
+reservationRouter.post('/shareReservation', reservationController.shareReservation)
 
 reservationRouter.get('/:id',reservationController.getById)
 reservationRouter.delete('/:id',reservationController.delete)

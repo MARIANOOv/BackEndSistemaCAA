@@ -25,9 +25,21 @@ export class RoomModel {
         return room[0]
     }
 
+    static async getNameById ({ id }) {
+        const [room] = await connection.query(
+            'SELECT Nombre FROM sala WHERE idSala = ?',
+            [id]
+        )
+        if(room.length === 0) {
+            return null
+        }
+
+        return room[0]
+    }
+
     static async create({ input }) {
         const {
-            imagen, // Este es el buffer (blob) de la imagen
+            imagen,
             nombre,
             descripcion,
             restricciones,

@@ -3,7 +3,6 @@ GET localhost:3000/resources/
 ###
 POST http://localhost:3000/resources
 Content-Type: application/json
-
 {
   "nombre": "Pillot"
 }
