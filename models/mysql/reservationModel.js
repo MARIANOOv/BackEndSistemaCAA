@@ -18,6 +18,7 @@ export class reservationModel {
     r.idSala,
     r.idCubiculo,
     r.idUsuario,
+    r.Observaciones,
     rr.idRecurso,
     rec.nombre AS NombreRecurso
     FROM 
@@ -39,6 +40,7 @@ export class reservationModel {
         idSala,
         idCubiculo,
         idUsuario,
+        Observaciones,
         idRecurso,
         NombreRecurso,
       } = row;
@@ -53,6 +55,7 @@ export class reservationModel {
           idSala,
           idCubiculo,
           idUsuario,
+          Observaciones,
           recursos: [],
         };
       }
