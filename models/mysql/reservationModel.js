@@ -364,6 +364,19 @@ export class reservationModel {
           [idUsuario]
       );
 
+
+      const[cubicleDetails] = await connection.query(
+          'SELECT Nombre FROM Cubiculo WHERE idCubiculo = ?',
+          [idCubiculo]
+        );
+
+
+
+      const[roomDetails] = await connection.query(
+            'SELECT Nombre FROM Sala WHERE idSala = ?',
+            [idSala]
+        );
+
       if (userDetails.length > 0) {
         const { Nombre, CorreoEmail } = userDetails[0];
 
@@ -383,8 +396,8 @@ export class reservationModel {
       Fecha: ${reservationDetails.Fecha}
       Hora de Inicio: ${reservationDetails.HoraInicio}
       Hora de Fin: ${reservationDetails.HoraFin}
-      Sala: ${idSala ? `Sala ${idSala}` : 'N/A'}
-      Cubículo: ${idCubiculo ? `Cubículo ${idCubiculo}` : 'N/A'}
+      Sala: ${idSala ? `Sala ${roomDetails[0].Nombre}` : 'N/A'}
+      Cubículo: ${idCubiculo ? `Cubículo ${cubicleDetails[0].Nombre}` : 'N/A'}
       Observaciones: ${observaciones || 'Ninguna'}
     `;
 
@@ -428,8 +441,8 @@ export class reservationModel {
           <strong>Fecha:</strong> ${formattedDate}<br>
           <strong>Hora de Inicio:</strong> ${reservationDetails.HoraInicio}<br>
           <strong>Hora de Fin:</strong> ${reservationDetails.HoraFin}<br>
-          ${idSala ? `<strong>Sala:</strong> Sala ${idSala}<br>` : ''}
-          ${idCubiculo ? `<strong>Cubículo:</strong> Cubículo ${idCubiculo}<br>` : ''}
+          ${idSala ? `<strong>Sala:</strong> ${roomDetails[0].Nombre}<br>` : ''}
+          ${idCubiculo ? `<strong>Cubículo:</strong>  ${cubicleDetails[0].Nombre}<br>` : ''}
           ${observaciones ? `<strong>Observaciones:</strong> ${observaciones}<br>` : ''} 
           ${refrigerio ? '<strong>Refrigerio:</strong> Sí (Según disponibilidad)' : ''}
         </p>
