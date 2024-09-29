@@ -48,6 +48,9 @@ export class userController {
     }
     static async login(req, res) {
         const user = await userModel.login({input: req.body})
+        if(user.Estado === 1){
+            return res.status(403).json({message: 'Su cuenta se encuentra bloqueada, comuniquese con la administración'})
+        }
         if(user){
             const token = jwt.sign({id: user.CedulaCarnet,role:user.RolNombre}, 'OKDIJITOCUALQUIERCOSAQUEDIGAMARIANO', {expiresIn: '1d'})
             return res.json(token)
