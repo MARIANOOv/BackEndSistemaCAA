@@ -123,65 +123,15 @@ export class reservationModel {
 
     const [reservations] = await connection.query(
       ` SELECT 
-        r.idReservacion,
-        r.Fecha,
-        r.HoraInicio,
-        r.HoraFin,
-        r.idSala,
-        r.idCubiculo,
-        r.idUsuario,
-        rr.idRecurso,
-        rec.nombre AS NombreRecurso
+        *
     FROM 
         reservacion r
-    JOIN 
-        reservacion_recursos rr ON r.idReservacion = rr.idReservacion
-    JOIN 
-        recursos rec ON rr.idRecurso = rec.idRecursos
     WHERE 
         r.Fecha = ?;`,
       [date]
     )
 
-    const reservationMap = {};
-
-    reservations.forEach((row) => {
-      const {
-        idReservacion,
-        Fecha,
-        HoraInicio,
-        HoraFin,
-        idSala,
-        idCubiculo,
-        idUsuario,
-        idRecurso,
-        NombreRecurso,
-      } = row;
-
-
-      if (!reservationMap[idReservacion]) {
-        reservationMap[idReservacion] = {
-          idReservacion,
-          Fecha,
-          HoraInicio,
-          HoraFin,
-          idSala,
-          idCubiculo,
-          idUsuario,
-          recursos: [],
-        };
-      }
-
-
-      if (idRecurso) {
-        reservationMap[idReservacion].recursos.push({
-          idRecurso,
-          NombreRecurso,
-        });
-      }
-    });
-
-    return Object.values(reservationMap);
+    return reservations
   }
 
   static async getByRoomId({ roomId }) {
