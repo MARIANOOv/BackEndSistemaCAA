@@ -28,7 +28,8 @@ export class cubicleModel {
     static async create ({ input }) {
         const {
             nombre,
-            ventana
+            ventana,
+            estado
         } = input
         try {
 
@@ -42,8 +43,8 @@ export class cubicleModel {
             }
 
             await connection.query(
-                'INSERT INTO cubiculo (Nombre, Ventana) VALUES (?, ?)',
-                [nombre, ventana]
+                'INSERT INTO cubiculo (Nombre, Ventana, Estado) VALUES (?, ?, ?)',
+                [nombre, ventana, estado]
             )
         }
         catch (error) {
@@ -73,7 +74,8 @@ export class cubicleModel {
     static async update({ id, input }) {
         const {
             nombre,
-            ventana
+            ventana,
+            estado
         } = input
 
         try {
@@ -88,9 +90,10 @@ export class cubicleModel {
             const [result] = await connection.query(
                 `UPDATE cubiculo
        SET Nombre = COALESCE(?, Nombre),
-           Ventana = COALESCE(?, Ventana)
+           Ventana = COALESCE(?, Ventana),
+           Estado = COALESCE(?, Estado)
        WHERE idCubiculo = ?;`,
-                [nombre, ventana, id]
+                [nombre, ventana, estado, id]
             );
 
             if (result.affectedRows === 0) {
@@ -105,7 +108,41 @@ export class cubicleModel {
 
             return updatedCubicle[0];
         } catch (error) {
-            throw new Error("Error al actualizar el cubiculo");
+            throw new Error(error);
+        }
+    }
+
+    static async lock() {
+        try {
+
+            const [result] = await connection.query(
+                `UPDATE cubiculo
+                 SET Estado = 0;`
+            );
+            const [updatedCubicles] = await connection.query(
+                `SELECT *
+                    FROM cubiculo;`,
+            );
+            return updatedCubicles;
+        } catch (error) {
+            throw new Error("Error al actualizar la sala");
+        }
+    }
+
+    static async unLock() {
+        try {
+
+            const [result] = await connection.query(
+                `UPDATE cubiculo
+                 SET Estado = 1;`
+            );
+            const [updatedCubicles] = await connection.query(
+                `SELECT *
+                    FROM cubiculo;`,
+            );
+            return updatedCubicles;
+        } catch (error) {
+            throw new Error("Error al actualizar la sala");
         }
     }
 

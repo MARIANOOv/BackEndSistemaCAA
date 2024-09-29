@@ -1,4 +1,4 @@
-GET localhost:3000/users/2021152632
+GET localhost:3000/users/
 
 ###
 POST localhost:3000/users/login

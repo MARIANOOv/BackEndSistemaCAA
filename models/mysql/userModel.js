@@ -17,6 +17,7 @@ export class userModel {
         u.Telefono,
         u.Telefono2,
         u.Direccion,
+        u.Estado,
         u.CorreoInstitucional,
         r.nombre AS NombreRol,
         r.idRol AS idRol
@@ -37,9 +38,9 @@ export class userModel {
     }
 
     static async login ({ input }) {
-        const { email, password } = input
+        const { email, password} = input
         const [user] = await connection.query(
-            `SELECT u.Contrasena, u.CedulaCarnet, r.nombre AS RolNombre
+            `SELECT u.Contrasena, u.CedulaCarnet, u.Estado, r.nombre AS RolNombre
      FROM usuario u
      JOIN rol r ON u.idRol = r.idRol
      WHERE u.CorreoEmail = ? OR u.CorreoInstitucional = ?`,
@@ -97,6 +98,7 @@ export class userModel {
             telefono,
             telefono2,
             direccion,
+            estado,
             idRol
         } = input
         try {
@@ -142,8 +144,8 @@ export class userModel {
             const hashedPassword = await bcrypt.hash(contrasena, 10)
 
             await connection.query(
-                'INSERT INTO Usuario (CedulaCarnet, Nombre, CorreoEmail, CorreoInstitucional, Contrasena, Telefono, Telefono2, Direccion, idRol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [cedulaCarnet, nombre, correoEmail, correoInstitucional, hashedPassword, telefono, telefono2, direccion, idRol]
+                'INSERT INTO Usuario (CedulaCarnet, Nombre, CorreoEmail, CorreoInstitucional, Contrasena, Telefono, Telefono2, Direccion, Estado, idRol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [cedulaCarnet, nombre, correoEmail, correoInstitucional, hashedPassword, telefono, telefono2, direccion, estado, idRol]
             )
         }
         catch (error) {
@@ -180,6 +182,7 @@ export class userModel {
             telefono,
             telefono2,
             direccion,
+            estado,
             idRol
         } = input
         try {
@@ -215,10 +218,11 @@ export class userModel {
            Telefono = COALESCE(?, Telefono),
            Telefono2 = COALESCE(?, Telefono2),
            Direccion = COALESCE(?, Direccion),
+           Estado = COALESCE(?, Estado),
            idRol = COALESCE(?, idRol)
            
        WHERE CedulaCarnet = ?;`,
-                [nombre, correoEmail, correoInstitucional, hashedPassword, telefono, telefono2, direccion, idRol, id]
+                [nombre, correoEmail, correoInstitucional, hashedPassword, telefono, telefono2, direccion, estado, idRol, id]
             );
             if (result.affectedRows === 0) {
                 throw new Error('No se encontro el usuario con ese id');

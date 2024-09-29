@@ -23,5 +23,9 @@ Content-Type: application/json
   "nombre": "Sala brandon"
 }
 
+###
+PATCH http://localhost:3000/rooms/roomUnLock
+
+
 
 
