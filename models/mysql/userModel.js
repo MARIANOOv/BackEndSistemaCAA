@@ -60,13 +60,12 @@ export class userModel {
 
     static async getById ({ id }) {
         const [user] = await connection.query(
-            'SELECT * FROM usuario WHERE CedulaCarnet = ?',
+            'SELECT * FROM Usuario WHERE CedulaCarnet = ?',
             [id]
         )
         if(user.length === 0) {
             return null
         }
-
         return user[0]
     }
 

@@ -179,5 +179,54 @@ export class reservationController {
       res.status(500).json({ message: 'Error al enviar los correos' });
     }
   }
+  static async getReservationsByCubicleIdAndWeek(req, res) {
+    try {
+
+      const { cubicleId } = req.params;
+      const { startDate, endDate } = req.query;
+
+
+      if (!cubicleId || !startDate || !endDate) {
+        return res.status(400).json({ message: 'Cubículo, fecha de inicio y fecha de fin son requeridos' });
+      }
+
+
+      const reservations = await reservationModel.getReservationsByCubicleIdAndWeek({ cubicleId, startDate, endDate });
+
+
+      if (reservations.length === 0) {
+        return res.status(404).json({ message: 'No hay reservaciones para este cubículo en el rango de fechas especificado' });
+      }
+
+
+      return res.json(reservations);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al obtener las reservaciones' });
+    }
+  }
+  static async getReservationsByRoomIdAndWeek(req, res) {
+    try {
+      const { roomId } = req.params;
+      const { startDate, endDate } = req.query;
+
+      if (!roomId || !startDate || !endDate) {
+        return res.status(400).json({ message: 'Sala, fecha de inicio y fecha de fin son requeridos' });
+      }
+
+      const reservations = await reservationModel.getReservationsByRoomIdAndWeek({ roomId, startDate, endDate });
+
+      if (reservations.length === 0) {
+        return res.status(404).json({ message: 'No hay reservaciones para esta sala en el rango de fechas especificado' });
+      }
+
+      return res.json(reservations);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al obtener las reservaciones' });
+    }
+  }
+
+
 
 }
