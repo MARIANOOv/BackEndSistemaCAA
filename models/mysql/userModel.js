@@ -69,23 +69,6 @@ export class userModel {
         return user[0]
     }
 
-    static async login ({ input }) {
-        const { email, password } = input
-        const [user] = await connection.query(
-            'SELECT * FROM usuario WHERE CorreoEmail = ? OR CorreoInstitucional = ?',
-            [email, email]
-        )
-
-
-        if(user.length === 0) {
-            return null
-        }
-        const isValid = await bcrypt.compare(password, user[0].Contrasena)
-        if (!isValid) {
-            return null
-        }
-        return user[0]
-    }
 
     static async create ({ input }) {
         const {

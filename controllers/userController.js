@@ -52,11 +52,13 @@ export class userController {
             return res.status(403).json({message: 'Su cuenta se encuentra bloqueada, comuniquese con la administración'})
         }
         if(user){
+            console.log(user)
             const token = jwt.sign({id: user.CedulaCarnet,role:user.RolNombre}, 'OKDIJITOCUALQUIERCOSAQUEDIGAMARIANO', {expiresIn: '1d'})
             return res.json(token)
         }
         res.status(404).json({message: 'Credenciales incorrectas'})
     }
+
     static async sendAllEmail(req, res) {
         try {
 
