@@ -13,6 +13,11 @@ export class reservationController {
     const reservations = await reservationModel.getAll()
     res.json(reservations)
   }
+
+  static async getAllPendingReservations(req, res) {
+    const reservations = await reservationModel.getAllPendingReservations()
+    res.json(reservations)
+  }
   static async getById(req, res) {
     const {id} = req.params
     const reservation = await reservationModel.getById({id})

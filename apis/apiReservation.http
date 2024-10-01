@@ -1,4 +1,4 @@
-GET localhost:3000/reservations
+GET localhost:3000/reservations/pending
 
 ###
 GET localhost:3000/reservations/getbyDate/2021-08-21
@@ -31,12 +31,12 @@ Content-Type: application/json
 DELETE http://localhost:3000/reservations/33
 
 ###
-PATCH http://localhost:3000/reservations/10
+PATCH http://localhost:3000/reservations/40
 Content-Type: application/json
 
 {
-  "fecha": "2021-08-21",
-  "idRecursos": [1,2]
+
+  "estado": false
 }
 
 ###

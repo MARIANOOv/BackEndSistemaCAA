@@ -6,6 +6,7 @@ import {reservationController} from "../controllers/reservationController.js";
 export const reservationRouter = Router();
 
 reservationRouter.get('/', reservationController.getAll)
+reservationRouter.get('/pending', reservationController.getAllPendingReservations)
 reservationRouter.post('/',reservationController.create)
 reservationRouter.get('/getbyDate/:date',reservationController.getByDate)
 reservationRouter.get('/getbyRoomId/:roomId',reservationController.getByRoomId)

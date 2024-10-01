@@ -26,7 +26,8 @@ export class reservationModel {
     LEFT JOIN 
         reservacion_recursos rr ON r.idReservacion = rr.idReservacion
     LEFT JOIN 
-        recursos rec ON rr.idRecurso = rec.idRecursos;`
+        recursos rec ON rr.idRecurso = rec.idRecursos
+    WHERE r.Estado = 1;`
     )
 
     const reservationMap = {};
@@ -55,6 +56,74 @@ export class reservationModel {
           idSala,
           idCubiculo,
           idUsuario,
+          Observaciones,
+          recursos: [],
+        };
+      }
+
+
+      if (idRecurso) {
+        reservationMap[idReservacion].recursos.push({
+          idRecurso,
+          NombreRecurso,
+        });
+      }
+    });
+
+    return Object.values(reservationMap);
+  }
+
+  static async getAllPendingReservations () {
+    const [reservations] = await connection.query(
+      ` SELECT 
+    r.idReservacion,
+    r.Fecha,
+    r.HoraInicio,
+    r.HoraFin,
+    r.idSala,
+    r.idCubiculo,
+    r.idUsuario,
+    r.Observaciones,
+    r.Refrigerio,
+    rr.idRecurso,
+    rec.nombre AS NombreRecurso
+    FROM 
+        reservacion r
+    LEFT JOIN 
+        reservacion_recursos rr ON r.idReservacion = rr.idReservacion
+    LEFT JOIN 
+        recursos rec ON rr.idRecurso = rec.idRecursos
+    WHERE r.Estado = 0;`
+    )
+
+    const reservationMap = {};
+
+    reservations.forEach((row) => {
+      const {
+        idReservacion,
+        Fecha,
+        HoraInicio,
+        HoraFin,
+        idSala,
+        idCubiculo,
+        idUsuario,
+        Observaciones,
+        Refrigerio,
+        idRecurso,
+        NombreRecurso,
+      } = row;
+
+
+      if (!reservationMap[idReservacion]) {
+        reservationMap[idReservacion] = {
+          idReservacion,
+          Fecha,
+          HoraInicio,
+          HoraFin,
+          idSala,
+          idCubiculo,
+          idUsuario,
+          Refrigerio,
           Observaciones,
           recursos: [],
         };
@@ -359,7 +428,7 @@ export class reservationModel {
     LEFT JOIN 
         recursos rec ON rr.idRecurso = rec.idRecursos
     WHERE 
-        r.idUsuario = ?;`,
+        r.Estado = 1 AND r.idUsuario = ?;`,
         [userId]
     );
 
@@ -421,6 +490,7 @@ export class reservationModel {
       observaciones,
       refrigerio,
       idRecursos,
+      estado,
     } = input
 
     try {
@@ -429,8 +499,8 @@ export class reservationModel {
       const fechaToDate = new Date(fecha)
 
       const [result] = await connection.query(
-        'INSERT INTO reservacion (Fecha,HoraInicio,HoraFin,idSala,idCubiculo,idUsuario,Observaciones,Refrigerio) VALUES (?,?,?,?,?,?,?,?)',
-        [fechaToDate, horaInicio, horaFin, idSala, idCubiculo, idUsuario, observaciones, refrigerio]
+        'INSERT INTO reservacion (Fecha,HoraInicio,HoraFin,idSala,idCubiculo,idUsuario,Observaciones,Refrigerio, Estado) VALUES (?,?,?,?,?,?,?,?,?)',
+        [fechaToDate, horaInicio, horaFin, idSala, idCubiculo, idUsuario, observaciones, refrigerio, estado]
       )
 
       const [userDetails] = await connection.query(
@@ -451,7 +521,9 @@ export class reservationModel {
             [idSala]
         );
 
-      if (userDetails.length > 0) {
+      if (userDetails.length > 0 && estado) {
+
+
         const { Nombre, CorreoEmail } = userDetails[0];
 
 
@@ -563,14 +635,25 @@ export class reservationModel {
 
   static async delete ({ id }) {
     try {
+
+      const [reservationState] = await connection.query(
+        'SELECT Estado FROM reservacion WHERE idReservacion = ?;', [id]
+      );
+
       await connection.query(
         'DELETE FROM reservacion_recursos WHERE idReservacion = ?',
         [id]
-      )
+      );
       await connection.query(
         'DELETE FROM reservacion WHERE idReservacion = ?',
         [id]
-      )
+      );
+
+      if(reservationState[0].Estado === 0){
+        return true
+      }
+
+
     }
     catch (error) {
       throw new Error()
@@ -587,9 +670,11 @@ export class reservationModel {
       horaFin,
       observaciones,
       idRecursos,
-      refrigerio
+      refrigerio,
+      estado
     } = input
     try {
+
       const [horaIni] = await connection.query(
         'SELECT HoraInicio FROM reservacion WHERE HoraInicio = ? AND Fecha = ?',
         [horaInicio, fecha]
@@ -616,9 +701,10 @@ export class reservationModel {
            HoraInicio = COALESCE(?, HoraInicio),
            HoraFin = COALESCE(?, HoraFin),
            Observaciones = COALESCE(?, Observaciones),
-           Refrigerio = COALESCE(?, Refrigerio)
+           Refrigerio = COALESCE(?, Refrigerio),
+           Estado = COALESCE(?, Estado)
            WHERE idReservacion = ?;`,
-        [fecha, horaInicio,horaFin, observaciones,refrigerio,id]
+        [fecha, horaInicio,horaFin, observaciones,refrigerio,estado, id]
       );
       if (result.affectedRows === 0) {
         throw new Error('No se encontro la reservacion con ese id');
@@ -632,34 +718,145 @@ export class reservationModel {
 
       const currentResourceIds = currentResources.map((resource) => resource.idRecurso);
 
-
-      const resourcesToDelete = currentResourceIds.filter(
-        (idRecurso) => !idRecursos.includes(idRecurso)
-      );
-
-
-      const resourcesToAdd = idRecursos.filter(
-        (idRecurso) => !currentResourceIds.includes(idRecurso)
-      );
-
-
-      if (resourcesToDelete.length > 0) {
-        await connection.query(
-          `DELETE FROM reservacion_recursos WHERE idReservacion = ? AND idRecurso IN (?);`,
-          [id, resourcesToDelete]
+      if (idRecursos && Array.isArray(idRecursos)) {
+        const resourcesToDelete = currentResourceIds.filter(
+          (idRecurso) => !idRecursos.includes(idRecurso)
         );
+
+        const resourcesToAdd = idRecursos.filter(
+          (idRecurso) => !currentResourceIds.includes(idRecurso)
+        );
+
+        if (resourcesToDelete.length > 0) {
+          await connection.query(
+            `DELETE FROM reservacion_recursos WHERE idReservacion = ? AND idRecurso IN (?);`,
+            [id, resourcesToDelete]
+          );
+        }
+
+        if (resourcesToAdd.length > 0) {
+          const insertPromises = resourcesToAdd.map((idRecurso) => {
+            return connection.query(
+              `INSERT INTO reservacion_recursos (idReservacion, idRecurso) VALUES (?, ?);`,
+              [id, idRecurso]
+            );
+          });
+
+          await Promise.all(insertPromises);
+        }
       }
 
+      if(estado){
 
-      if (resourcesToAdd.length > 0) {
-        const insertPromises = resourcesToAdd.map((idRecurso) => {
-          return connection.query(
-            `INSERT INTO reservacion_recursos (idReservacion, idRecurso) VALUES (?, ?);`,
-            [id, idRecurso]
+        const [reservationInfo] = await connection.query(
+          `SELECT idUsuario, idSala, idCubiculo FROM reservacion WHERE idReservacion = ?;`,
+          [id]
+        );
+
+        console.log(reservationInfo[0].idSala);
+
+
+        const [userDetails] = await connection.query(
+          'SELECT Nombre, CorreoEmail FROM Usuario WHERE CedulaCarnet = ?;',
+          [reservationInfo[0].idUsuario]
+        );
+
+        const[cubicleDetails] = await connection.query(
+          'SELECT Nombre FROM Cubiculo WHERE idCubiculo = ?',
+          [reservationInfo[0].idCubiculo]
+        );
+
+        const[roomDetails] = await connection.query(
+          'SELECT Nombre FROM Sala WHERE idSala = ?',
+          [reservationInfo[0].idSala]
+        );
+
+
+
+        if (userDetails.length > 0) {
+          const { Nombre, CorreoEmail } = userDetails[0];
+
+
+          const [reservation] = await connection.query(
+            `SELECT *
+         FROM reservacion WHERE idReservacion = ?;`,[id]
           );
-        });
 
-        await Promise.all(insertPromises);
+
+          const reservationDetails = reservation[0];
+          const emailSubject = 'Reserva Aceptada';
+          const emailText = `
+      Hola ${Nombre},
+      
+      La reserva que solicitaste con los siguiente datos a sido aceptada!!
+      Fecha: ${reservationDetails.Fecha}
+      Hora de Inicio: ${reservationDetails.HoraInicio}
+      Hora de Fin: ${reservationDetails.HoraFin}
+      Sala: ${reservationInfo[0].idSala ? `Sala ${roomDetails[0].Nombre}` : 'N/A'}
+      Cubículo: ${reservationInfo[0].idCubiculo ? `Cubículo ${cubicleDetails[0].Nombre}` : 'N/A'}
+      Observaciones: ${reservationDetails.Observaciones || 'Ninguna'}
+    `;
+
+          const formattedDate = format(new Date(reservationDetails.Fecha), 'EEEE, dd MMMM yyyy', { locale: es });
+
+          const emailHtml = `
+<div style="padding: 20px; background-color: #f4f4f4;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px;">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <!-- Contenedor del Logo Centrador -->
+        <table border="0" cellpadding="0" cellspacing="0" style="text-align: center;">
+          <tr>
+            <!-- Texto "TEC" -->
+            <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 36px; font-weight: bold;">
+              TEC
+            </td>
+            <!-- Línea Roja Separadora -->
+            <td style="width: 5px; background-color: #c1272d;"></td>
+            <!-- Texto "Tecnológico de Costa Rica" -->
+            <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 18px;">
+              Centro Academico<br>de Alajuela
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <!-- Asunto -->
+        <h1 style="font-size: 24px; font-weight: bold; color: #333; margin: 0;">${emailSubject}</h1>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 10px 0;">
+        <!-- Detalles de la reservación -->
+        <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
+          Tu reserva se ha aceptado con los siguientes detalles:
+        </p>
+        <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
+          <strong>Fecha:</strong> ${formattedDate}<br>
+          <strong>Hora de Inicio:</strong> ${reservationDetails.HoraInicio}<br>
+          <strong>Hora de Fin:</strong> ${reservationDetails.HoraFin}<br>
+          ${reservationInfo[0].idSala ? `<strong>Sala:</strong> ${roomDetails[0].Nombre}<br>` : ''}
+          ${reservationInfo[0].idCubiculo ? `<strong>Cubículo:</strong>  ${cubicleDetails[0].Nombre}<br>` : ''}
+          ${reservationDetails.Observaciones ? `<strong>Observaciones:</strong> ${observaciones}<br>` : ''} 
+          ${reservationDetails.Refrigerio ? '<strong>Refrigerio:</strong> Sí (Según disponibilidad)' : ''}
+        </p>
+      </td>
+    </tr>
+  </table>
+</div>
+`;
+
+          sendEmail(
+            CorreoEmail,
+            emailSubject,
+            emailText,
+            emailHtml
+          );
+        }
+
+
       }
 
       return 1;
