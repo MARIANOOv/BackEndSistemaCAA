@@ -636,8 +636,8 @@ export class reservationModel {
   static async delete ({ id }) {
     try {
 
-      const [reservationState] = await connection.query(
-        'SELECT Estado FROM reservacion WHERE idReservacion = ?;', [id]
+      const [reservation] = await connection.query(
+        'SELECT * FROM reservacion WHERE idReservacion = ?;', [id]
       );
 
       await connection.query(
@@ -649,13 +649,118 @@ export class reservationModel {
         [id]
       );
 
-      if(reservationState[0].Estado === 0){
-        return true
+      if(reservation[0].Estado === 0){
+
+        const reservDe = reservation[0];
+        const [userDetails] = await connection.query(
+          'SELECT Nombre, CorreoEmail FROM Usuario WHERE CedulaCarnet = ?',
+          [reservation[0].idUsuario]
+        );
+
+
+        const[cubicleDetails] = await connection.query(
+          'SELECT Nombre FROM Cubiculo WHERE idCubiculo = ?',
+          [reservation[0].idCubiculo]
+        );
+
+
+
+        const[roomDetails] = await connection.query(
+          'SELECT Nombre FROM Sala WHERE idSala = ?',
+          [reservation[0].idSala]
+        );
+
+        if (userDetails.length > 0) {
+
+
+          const { Nombre, CorreoEmail } = userDetails[0];
+
+
+          const [reservation] = await connection.query(
+            `SELECT *
+         FROM reservacion WHERE idReservacion = ?;`, [id]
+          );
+
+
+          const reservationDetails = reservDe;
+          const emailSubject = 'Rechazo de Reservación';
+          const emailText = `
+      Hola ${Nombre},
+      
+      La reserva que solicitaste con los siguiente datos a sido rechazada :(
+      Si quieres saber los motivos contacta con la administración.
+      Fecha: ${reservationDetails.Fecha}
+      Hora de Inicio: ${reservationDetails.HoraInicio}
+      Hora de Fin: ${reservationDetails.HoraFin}
+      Sala: ${reservationDetails.idSala ? `Sala ${roomDetails[0].Nombre}` : 'N/A'}
+      Cubículo: ${reservationDetails.idCubiculo ? `Cubículo ${cubicleDetails[0].Nombre}` : 'N/A'}
+      Observaciones: ${reservationDetails.Observaciones || 'Ninguna'}
+    `;
+
+          const formattedDate = format(new Date(reservationDetails.Fecha), 'EEEE, dd MMMM yyyy', { locale: es });
+
+          const emailHtml = `
+<div style="padding: 20px; background-color: #f4f4f4;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px;">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <!-- Contenedor del Logo Centrador -->
+        <table border="0" cellpadding="0" cellspacing="0" style="text-align: center;">
+          <tr>
+            <!-- Texto "TEC" -->
+            <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 36px; font-weight: bold;">
+              TEC
+            </td>
+            <!-- Línea Roja Separadora -->
+            <td style="width: 5px; background-color: #c1272d;"></td>
+            <!-- Texto "Tecnológico de Costa Rica" -->
+            <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 18px;">
+              Centro Academico<br>de Alajuela
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <!-- Asunto -->
+        <h1 style="font-size: 24px; font-weight: bold; color: #333; margin: 0;">${emailSubject}</h1>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding: 10px 0;">
+        <!-- Detalles de la reservación -->
+        <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
+          Tu reserva se ha rechazado con los siguientes detalles:
+        </p>
+        <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
+          <strong>Fecha:</strong> ${formattedDate}<br>
+          <strong>Hora de Inicio:</strong> ${reservationDetails.HoraInicio}<br>
+          <strong>Hora de Fin:</strong> ${reservationDetails.HoraFin}<br>
+          ${reservationDetails.idSala ? `<strong>Sala:</strong> ${roomDetails[0].Nombre}<br>` : ''}
+          ${reservationDetails.idCubiculo ? `<strong>Cubículo:</strong>  ${cubicleDetails[0].Nombre}<br>` : ''}
+          ${reservationDetails.Observaciones ? `<strong>Observaciones:</strong> ${reservationDetails.Observaciones}<br>` : ''} 
+          ${reservationDetails.Refrigerio ? '<strong>Refrigerio:</strong> Sí (Según disponibilidad)' : ''}
+        </p>
+      </td>
+    </tr>
+  </table>
+</div>
+`;
+
+          sendEmail(
+            CorreoEmail,
+            emailSubject,
+            emailText,
+            emailHtml
+          );
+        }
       }
 
 
     }
     catch (error) {
+      console.error(error)
       throw new Error()
     }
     return true
@@ -753,9 +858,6 @@ export class reservationModel {
           [id]
         );
 
-        console.log(reservationInfo[0].idSala);
-
-
         const [userDetails] = await connection.query(
           'SELECT Nombre, CorreoEmail FROM Usuario WHERE CedulaCarnet = ?;',
           [reservationInfo[0].idUsuario]
@@ -839,7 +941,7 @@ export class reservationModel {
           <strong>Hora de Fin:</strong> ${reservationDetails.HoraFin}<br>
           ${reservationInfo[0].idSala ? `<strong>Sala:</strong> ${roomDetails[0].Nombre}<br>` : ''}
           ${reservationInfo[0].idCubiculo ? `<strong>Cubículo:</strong>  ${cubicleDetails[0].Nombre}<br>` : ''}
-          ${reservationDetails.Observaciones ? `<strong>Observaciones:</strong> ${observaciones}<br>` : ''} 
+          ${reservationDetails.Observaciones ? `<strong>Observaciones:</strong> ${reservationDetails.observaciones}<br>` : ''} 
           ${reservationDetails.Refrigerio ? '<strong>Refrigerio:</strong> Sí (Según disponibilidad)' : ''}
         </p>
       </td>
