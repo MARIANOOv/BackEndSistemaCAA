@@ -35,8 +35,7 @@ app.use('/assets', assetRouter);
 app.use('/applications', applicationRouter);
 app.use('/reservations', reservationRouter);
 
-
-cron.schedule('13 1 * * *', () => {
+cron.schedule('30 14 * * *', () => {
     notificationService();
 }, {
     timezone: "America/Costa_Rica"

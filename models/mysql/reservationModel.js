@@ -390,8 +390,6 @@ export class reservationModel {
 
 
   static async getByCubicleId({ cubicleId }) {
-
-
     const [reservations] = await connection.query(
       ` SELECT 
         *
@@ -631,7 +629,20 @@ export class reservationModel {
     return reservation[0]
   }
 
+  static async deleteByDate({ date }) {
 
+    console.log(date)
+    try {
+      await connection.query(
+          'DELETE FROM reservacion r WHERE r.Fecha = ?;',
+          [date]
+      );
+    }
+    catch (error) {
+      throw new Error("Error al eliminar el rol")
+    }
+    return true
+  }
 
   static async delete ({ id }) {
     try {

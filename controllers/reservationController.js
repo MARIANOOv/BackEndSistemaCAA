@@ -26,11 +26,17 @@ export class reservationController {
   }
 
   static async getByDate(req, res) {
-    const {date} = req.params
-    const reservations = await reservationModel.getByDate({date})
-    if(reservations.length > 0) return res.json(reservations)
-    res.status(404).json({message: 'No hay reservaciones en esa fecha'})
+    try {
+      const { date } = req.params;
+      const reservations = await reservationModel.getByDate({ date });
+
+      return res.json(reservations.length > 0 ? reservations : []);
+
+    } catch (error) {
+      return res.status(500).json({ message: 'Error al consultar las reservaciones', error });
+    }
   }
+
 
   static async getByRoomId(req, res) {
     const {roomId} = req.params
@@ -66,6 +72,14 @@ export class reservationController {
   static async delete(req, res) {
     const {id} = req.params
     const deletedReservation = await reservationModel.delete({id})
+
+    if(deletedReservation === false) return res.status(404).json({message: 'Reservación no eliminada'})
+    res.status(204).json({message: "Se elimino correctamente la reservación"})
+  }
+
+  static async deleteByDate(req, res) {
+    const {date} = req.params
+    const deletedReservation = await reservationModel.deleteByDate({date})
 
     if(deletedReservation === false) return res.status(404).json({message: 'Reservación no eliminada'})
     res.status(204).json({message: "Se elimino correctamente la reservación"})

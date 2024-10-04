@@ -17,5 +17,6 @@ reservationRouter.get('/getbyCubicleIdDate/:cubicleId', reservationController.ge
 reservationRouter.get('/getbyRoomIdDate/:roomId', reservationController.getReservationsByRoomIdAndWeek)
 
 reservationRouter.get('/:id',reservationController.getById)
+reservationRouter.delete('/deleteByDate/:date',reservationController.deleteByDate)
 reservationRouter.delete('/:id',reservationController.delete)
 reservationRouter.patch('/:id',reservationController.update)

@@ -1,7 +1,7 @@
-GET localhost:3000/reservations/pending
+GET localhost:3000/reservations/
 
 ###
-GET localhost:3000/reservations/getbyDate/2021-08-21
+GET localhost:3000/reservations/getbyDate/2024-10-10
 
 ###
 GET localhost:3000/reservations/getbyRoomId/6
@@ -26,6 +26,8 @@ Content-Type: application/json
   "refrigerio": true,
   "idRecursos": [1]
 }
+###
+DELETE http://localhost:3000/reservations/deletebyDate/2024-10-05
 
 ###
 DELETE http://localhost:3000/reservations/33
