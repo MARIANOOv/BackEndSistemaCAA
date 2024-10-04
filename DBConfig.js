@@ -1,4 +1,3 @@
-
 export const DBConfig = {
     host: 'localhost',
     user: 'root',
