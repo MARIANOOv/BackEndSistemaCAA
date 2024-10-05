@@ -13,6 +13,7 @@ import cors from 'cors';
 import multer from 'multer';
 import cron from 'node-cron';
 import {notificationService} from './services/notificationService.js';
+import { valorationRouter } from './routes/valorationRouter.js'
 
 const app = express();
 app.use(cors({origin: '*'}));
@@ -34,6 +35,7 @@ app.use('/users', userRouter);
 app.use('/assets', assetRouter);
 app.use('/applications', applicationRouter);
 app.use('/reservations', reservationRouter);
+app.use('/valorations', valorationRouter);
 
 
 cron.schedule('13 1 * * *', () => {
