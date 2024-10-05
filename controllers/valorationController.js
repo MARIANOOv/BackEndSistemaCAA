@@ -27,7 +27,7 @@ export class valorationController {
   static async getBySala(req, res) {
     const { idSala } = req.params;
     try {
-      const valoraciones = await valorationModel.getBySala(idSala);
+      const valoraciones = await valorationModel.getByRoomId(idSala);
       if (valoraciones.length === 0) {
         return res.status(404).json({ message: 'No se encontraron valoraciones para esta sala' });
       }
@@ -42,7 +42,7 @@ export class valorationController {
   static async getByCubiculo(req, res) {
     const { idCubiculo } = req.params;
     try {
-      const valoraciones = await valorationModel.getByCubiculo(idCubiculo);
+      const valoraciones = await valorationModel.getByCubicleId(idCubiculo);
       if (valoraciones.length === 0) {
         return res.status(404).json({ message: 'No se encontraron valoraciones para este cubículo' });
       }

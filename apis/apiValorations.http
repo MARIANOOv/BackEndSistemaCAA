@@ -1,4 +1,4 @@
-GET localhost:3000/valorations
+GET localhost:3000/valorations/cubiculo/1
 
 ###
 POST http://localhost:3000/valorations

@@ -47,16 +47,20 @@ export class userController {
         res.status(404).json({message: 'Usuario no actualizado'})
     }
     static async login(req, res) {
+
         const user = await userModel.login({input: req.body})
+
+        if(!user) return res.status(404).json({message: 'Credenciales incorrectas'})
+
         if(user.Estado === 1){
             return res.status(403).json({message: 'Su cuenta se encuentra bloqueada, comuniquese con la administración'})
         }
-        if(user){
-            console.log(user)
+        else{
+
             const token = jwt.sign({id: user.CedulaCarnet,role:user.RolNombre}, 'OKDIJITOCUALQUIERCOSAQUEDIGAMARIANO', {expiresIn: '1d'})
             return res.json(token)
         }
-        res.status(404).json({message: 'Credenciales incorrectas'})
+
     }
 
     static async sendAllEmail(req, res) {

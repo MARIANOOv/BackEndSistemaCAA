@@ -415,6 +415,7 @@ export class reservationModel {
         r.idSala,
         r.idCubiculo,
         r.idUsuario,
+        r.EncuestaCompletada,
         rr.idRecurso,
         rec.nombre AS NombreRecurso,
         r.Observaciones,
@@ -445,6 +446,7 @@ export class reservationModel {
         NombreRecurso,
         Observaciones,
         Refrigerio,
+        EncuestaCompletada,
       } = row;
 
 
@@ -457,6 +459,7 @@ export class reservationModel {
           idSala,
           idCubiculo,
           idUsuario,
+          EncuestaCompletada,
           Observaciones: idSala ? Observaciones : null,
           Refrigerio: idSala ? Refrigerio : null,
           recursos: [],
@@ -497,8 +500,8 @@ export class reservationModel {
       const fechaToDate = new Date(fecha)
 
       const [result] = await connection.query(
-        'INSERT INTO reservacion (Fecha,HoraInicio,HoraFin,idSala,idCubiculo,idUsuario,Observaciones,Refrigerio, Estado) VALUES (?,?,?,?,?,?,?,?,?)',
-        [fechaToDate, horaInicio, horaFin, idSala, idCubiculo, idUsuario, observaciones, refrigerio, estado]
+        'INSERT INTO reservacion (Fecha,HoraInicio,HoraFin,idSala,idCubiculo,idUsuario,Observaciones,Refrigerio, Estado, EncuestaCompletada) VALUES (?,?,?,?,?,?,?,?,?,?)',
+        [fechaToDate, horaInicio, horaFin, idSala, idCubiculo, idUsuario, observaciones, refrigerio, estado, false]
       )
 
       const [userDetails] = await connection.query(
@@ -787,7 +790,8 @@ export class reservationModel {
       observaciones,
       idRecursos,
       refrigerio,
-      estado
+      estado,
+      encuestaCompletada
     } = input
     try {
 
@@ -818,9 +822,10 @@ export class reservationModel {
            HoraFin = COALESCE(?, HoraFin),
            Observaciones = COALESCE(?, Observaciones),
            Refrigerio = COALESCE(?, Refrigerio),
-           Estado = COALESCE(?, Estado)
+           Estado = COALESCE(?, Estado),
+           EncuestaCompletada = COALESCE(?, EncuestaCompletada)
            WHERE idReservacion = ?;`,
-        [fecha, horaInicio,horaFin, observaciones,refrigerio,estado, id]
+        [fecha, horaInicio,horaFin, observaciones,refrigerio,estado, encuestaCompletada, id]
       );
       if (result.affectedRows === 0) {
         throw new Error('No se encontro la reservacion con ese id');

@@ -33,12 +33,11 @@ DELETE http://localhost:3000/reservations/deletebyDate/2024-10-05
 DELETE http://localhost:3000/reservations/33
 
 ###
-PATCH http://localhost:3000/reservations/40
+PATCH http://localhost:3000/reservations/26
 Content-Type: application/json
 
 {
-
-  "estado": false
+  "encuestaCompletada": false
 }
 
 ###

@@ -27,6 +27,32 @@ export class valorationModel {
     return valoracion[0];
   }
 
+  static async getByRoomId(idSala ) {
+    const [valoracion] = await connection.query(
+      'SELECT * FROM valoracionreservas WHERE idSala = ?',
+      [idSala]
+    );
+
+    if (valoracion.length === 0) {
+      return null;
+    }
+
+    return valoracion[0];
+  }
+
+  static async getByCubicleId(idCubiculo ) {
+    const [valoracion] = await connection.query(
+      'SELECT * FROM valoracionreservas WHERE idCubiculo = ?',
+      [idCubiculo]
+    );
+
+    if (valoracion.length === 0) {
+      return null;
+    }
+
+    return valoracion[0];
+  }
+
   // Crear una nueva valoración
   static async create({ input }) {
     const { idSala, idCubiculo, nota, observaciones } = input;
