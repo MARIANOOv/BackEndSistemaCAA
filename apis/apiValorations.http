@@ -1,0 +1,17 @@
+GET localhost:3000/valorations
+
+###
+POST http://localhost:3000/valorations
+Content-Type: application/json
+
+{
+  "idCubiculo": 1,
+  "nota": 6,
+  "observaciones": "Razonable experiencia"
+}
+
+
+###
+DELETE http://localhost:3000/valorations/2
+
+
