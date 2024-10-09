@@ -404,6 +404,42 @@ export class reservationModel {
     return reservations;
   }
 
+  static async getByYear({ year }) {
+    const [reservations] = await connection.query(
+      ` SELECT 
+        *
+    FROM 
+        reservacion 
+    WHERE 
+        YEAR(Fecha) = ?;`,
+      [year]
+    )
+
+    return reservations
+  }
+
+  static async getByMonth({ year, month }) {
+    const [reservations] = await connection.query(
+      'SELECT * FROM reservacion WHERE YEAR(Fecha) = ? AND MONTH(Fecha) = ?',
+      [year, month])
+
+    return reservations
+  }
+
+  static async getByDateRange({ startDate, endDate }) {
+    const [reservations] = await connection.query(
+      ` SELECT 
+        *
+    FROM 
+        reservacion 
+    WHERE 
+        Fecha BETWEEN ? AND ?;`,
+      [startDate, endDate]
+    )
+
+    return reservations
+  }
+
   static async getByUserId({ userId }) {
 
     const [reservations] = await connection.query(

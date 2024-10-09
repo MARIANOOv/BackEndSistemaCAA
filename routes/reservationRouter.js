@@ -15,6 +15,9 @@ reservationRouter.get('/getbyUserId/:userId',reservationController.getByUserId)
 reservationRouter.post('/shareReservation', reservationController.shareReservation)
 reservationRouter.get('/getbyCubicleIdDate/:cubicleId', reservationController.getReservationsByCubicleIdAndWeek)
 reservationRouter.get('/getbyRoomIdDate/:roomId', reservationController.getReservationsByRoomIdAndWeek)
+reservationRouter.get('/year/:year', reservationController.getByYear);
+reservationRouter.get('/month/:year/:month', reservationController.getByMonth);
+reservationRouter.get('/range', reservationController.getByDateRange);
 
 reservationRouter.get('/:id',reservationController.getById)
 reservationRouter.delete('/deleteByDate/:date',reservationController.deleteByDate)

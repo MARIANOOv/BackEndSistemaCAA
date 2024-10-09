@@ -52,6 +52,27 @@ export class reservationController {
     res.status(404).json({message: 'No hay reservaciones para este cubiculo'})
   }
 
+  static async getByYear(req, res) {
+    const {year} = req.params
+    const reservations = await reservationModel.getByYear({year})
+    if(reservations.length > 0) return res.json(reservations)
+    res.status(404).json({message: 'No hay reservaciones para el año seleccionado'})
+  }
+
+  static async getByMonth(req, res) {
+    const {year, month} = req.params
+    const reservations = await reservationModel.getByMonth({year, month})
+    if(reservations.length > 0) return res.json(reservations)
+    res.status(404).json({message: 'No hay reservaciones para el mes seleccionado'})
+  }
+
+  static async getByDateRange(req, res) {
+    const {startDate, endDate} = req.query
+    const reservations = await reservationModel.getByDateRange({startDate, endDate})
+    if(reservations.length > 0) return res.json(reservations)
+    res.status(404).json({message: 'No hay reservaciones en el rango de fechas seleccionado'})
+  }
+
   static async getByUserId(req, res) {
     const {userId} = req.params
     const reservations = await reservationModel.getByUserId({userId})
