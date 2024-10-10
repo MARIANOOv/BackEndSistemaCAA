@@ -8,7 +8,7 @@ import {cubicleModel} from "../models/mysql/cubicleModel.js";
 import {RoomModel} from "../models/mysql/roomModel.js";
 
 export async function notificationService() {
-    const threeDaysFromNow = moment().tz('America/Costa_Rica').add(3, 'days').format('YYYY-MM-DD');
+    const threeDaysFromNow = moment().tz('America/Costa_Rica').add(1, 'days').format('YYYY-MM-DD');
     try {
         const upcomingReservations = await reservationModel.getByDate({ date: threeDaysFromNow });
 
@@ -23,9 +23,7 @@ export async function notificationService() {
                     const formattedDate = format(new Date(reservation.Fecha), 'EEEE, dd MMMM yyyy', { locale: es });
 
                     const emailText = `
-                    Hola ${user.Nombre},
-                    
-                    Este es un recordatorio de que usted tiene una reunión agendada en 3 días.
+                    Hola ${user.Nombre}, este es un recordatorio de que usted tiene una reunión agendada en 3 días.
                     
                     Fecha: ${formattedDate}
                     Hora de Inicio: ${reservation.HoraInicio}
@@ -64,7 +62,7 @@ export async function notificationService() {
                         <tr>
                           <td align="center" style="padding: 10px 0;">
                             <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
-                              Este es un recordatorio de que usted tiene una reunión agendada en 3 días.
+                              Hola ${user.Nombre}, este es un recordatorio de que usted tiene una reunión agendada en 3 días.
                             </p>
                             <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
                               <strong>Fecha:</strong> ${formattedDate}<br>

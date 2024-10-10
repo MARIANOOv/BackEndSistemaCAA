@@ -283,7 +283,7 @@ export class RoomModel {
 </div>
 `;
 
-                // Enviar el correo a cada usuario
+
                 sendEmail(
                     CorreoEmail,
                     emailSubject,
