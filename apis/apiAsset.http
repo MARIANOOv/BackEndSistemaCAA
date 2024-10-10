@@ -24,7 +24,7 @@ GET http://localhost:3000/assets/category/2
 GET http://localhost:3000/assets/182732645
 
 ###
-DELETE http://localhost:3000/assets/12343322
+DELETE http://localhost:3000/assets/182732645
 
 ###
 PATCH http://localhost:3000/assets/182732645

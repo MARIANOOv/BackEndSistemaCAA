@@ -60,6 +60,15 @@ export class roleModel {
 
     static async delete ({ id }) {
         try {
+            const [result] = await connection.query(
+                'SELECT * FROM usuario WHERE idRol = ?',
+                [id]
+            )
+
+            if(result.length>0){
+                return false
+            }
+
             await connection.query(
                 'DELETE FROM rol WHERE idRol = ?',
                 [id]

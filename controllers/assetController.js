@@ -27,7 +27,7 @@ export class assetController {
             return res.status(400).json({error: JSON.parse(result.error.message)})
         }
         const newAsset= await assetModel.create({input: req.body})
-        if(newAsset === false) return res.status(409).json({message: 'Dato repetido'})
+        if(newAsset === false) return res.status(409).json({message: 'Activo con numero de serie o placa ya existe, tambien puede faltar la categoria a la que pertenece'})
         res.status(201).json(newAsset)
     }
 

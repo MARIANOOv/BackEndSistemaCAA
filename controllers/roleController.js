@@ -29,7 +29,7 @@ export class roleController {
         const {id} = req.params
         const deletedRole = await roleModel.delete({id})
 
-        if(deletedRole === false) return res.status(404).json({message: 'Rol no eliminado'})
+        if(deletedRole === false) return res.status(404).json({message: 'Rol no eliminado, se encuentra asignado a un usuario'})
         res.status(204).json({message: "Se elimino correctamente el Rol"})
     }
 

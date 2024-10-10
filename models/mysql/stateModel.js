@@ -70,6 +70,13 @@ export class StateModel {
 
   static async delete ({ id }) {
     try {
+      const [result] = await connection.query(
+        'SELECT * FROM activo WHERE idEstado = ?',
+        [id]
+      )
+      if (result.length > 0) {
+        return false
+      }
       await connection.query(
         'DELETE FROM Estado WHERE idEstado = ?',
         [id]

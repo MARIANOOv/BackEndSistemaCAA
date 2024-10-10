@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise'
 import { DBConfig } from '../../DBConfig.js'
+import {query} from "express";
 import {roleModel} from "./roleModel.js";
 
 
@@ -72,6 +73,14 @@ export class categoryModel {
 
     static async delete ({ id }) {
         try {
+            const [result] = await connection.query(
+                'SELECT * FROM activo WHERE idCategoria = ?',
+                [id]
+            )
+            if (result.length > 0) {
+                return false
+            }
+
             await connection.query(
                 'DELETE FROM categoria WHERE idCategoria = ?',
                 [id]

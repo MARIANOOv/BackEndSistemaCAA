@@ -30,7 +30,7 @@ export class StateController {
     const {id} = req.params
     const deletedState = await StateModel.delete({id})
 
-    if(deletedState === false) return res.status(404).json({message: 'Estado no eliminado'})
+    if(deletedState === false) return res.status(404).json({message: 'Estado no eliminado, algun activo esta asignado con este estado'})
     res.status(204).json({message: "Se elimino correctamente el estado"})
   }
 

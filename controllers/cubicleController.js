@@ -29,7 +29,7 @@ export class cubicleController {
         const {id} = req.params
         const deletedCubicle = await cubicleModel.delete({id})
 
-        if(deletedCubicle === false) return res.status(404).json({message: 'Cubiculo no eliminado'})
+        if(deletedCubicle === false) return res.status(404).json({message: 'Cubiculo asignado a una reservacion, cubiculo no eliminado'})
         res.status(204).json({message: "Se elimino correctamente el cubiculo"})
     }
 
