@@ -28,10 +28,6 @@ const assetSchema = z.object({
     idEstado: z.number().int({
         invalid_type_error: 'El idEstado debe ser un numero entero',
     }).positive(),
-    condicion: z.boolean({
-        invalid_type_error: 'La condicion debe ser un booleano',
-        required_error: 'La condicion es requerida'
-    }),
     idCategoria:  z.number().int({
         invalid_type_error: 'El idCategoria debe ser un numero entero',
         required_error: 'El idCategoria es requerido'

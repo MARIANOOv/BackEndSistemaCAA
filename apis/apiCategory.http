@@ -1,6 +1,6 @@
 ###Estos son los endpoints de la tabla categories
 ###
-GET http://localhost:3000/categories/Laptop
+GET http://localhost:3000/categories/
 
 
 ###

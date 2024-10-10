@@ -138,15 +138,14 @@ export class assetModel {
             descripcion,
             modelo,
             marca,
+            numeroSerie,
             idEstado,
             condicion,
-
+            idCategoria
         } = input
 
         try {
-
-
-
+            console.log(idEstado)
 
             if(idEstado != null){
 
@@ -161,18 +160,18 @@ export class assetModel {
                 }
             }
 
-
-
             const [result] = await connection.query(
                 `UPDATE activo
        SET Nombre = COALESCE(?, Nombre),
            Descripcion = COALESCE(?, Descripcion),
            Modelo = COALESCE(?, Modelo),
            Marca = COALESCE(?, Marca),
+           NumeroSerie = COALESCE(?, NumeroSerie),
            idEstado = COALESCE(?, idEstado),
-           Condicion = COALESCE(?, Condicion)
+           Condicion = COALESCE(?, Condicion),
+           idCategoria = COALESCE(?, idCategoria)
        WHERE NumeroPlaca = ?;`,
-                [nombre, descripcion, modelo, marca, idEstado, condicion, id]
+                [nombre, descripcion, modelo, marca, numeroSerie, idEstado, condicion, idCategoria, id]
             );
             if (result.affectedRows === 0) {
                 throw new Error('No se encontro activo con ese id');

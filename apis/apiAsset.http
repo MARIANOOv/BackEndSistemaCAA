@@ -31,6 +31,5 @@ PATCH http://localhost:3000/assets/182732645
 Content-Type: application/json
 
 {
-  "nombre": "Laptoide",
-  "idEstado": 2
+  "numeroSerie": "18273bbb"
 }
