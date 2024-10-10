@@ -8,7 +8,24 @@ export class assetModel {
 
     static async getAll () {
         const [assets] = await connection.query(
-            'SELECT * FROM activo',
+            `SELECT 
+        a.NumeroPlaca,
+        a.Nombre,
+        a.Descripcion,
+        a.Modelo,
+        a.NumeroSerie,
+        a.Marca,
+        a.Condicion,
+        e.Tipo AS NombreEstado,
+        e.idEstado AS idEstado,
+        c.Nombre AS NombreCategoria,
+        c.idCategoria AS idCategoria
+        FROM 
+            activo a
+        JOIN 
+            estado e ON a.idEstado = e.idEstado
+        JOIN
+            categoria c on a.idCategoria = c.idCategoria;`,
         )
         return assets
     }

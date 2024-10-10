@@ -1,11 +1,20 @@
 import {categoryModel} from '../models/mysql/categoryModel.js';
 import {validateCategory, validateCategoryUpdate} from '../schemas/categorySchema.js';
+import {roleModel} from "../models/mysql/roleModel.js";
 export class categoryController {
 
     static async getAll(req, res) {
         const categories = await categoryModel.getAll()
         res.json(categories)
     }
+
+    static async getByCategoryName(req, res) {
+        const {nombre} = req.params
+        const role = await categoryModel.getByCategoryName({nombre})
+        if(role) return res.json(role)
+        res.status(404).json({message: 'Categoria no encontrada'})
+    }
+
     static async getById(req, res) {
         const {id} = req.params
         const category = await categoryModel.getById({id})

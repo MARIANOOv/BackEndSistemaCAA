@@ -24,8 +24,7 @@ export class userModel {
         FROM 
             usuario u
         JOIN 
-            rol r ON u.idRol = r.idRol;
-`,
+            rol r ON u.idRol = r.idRol;`,
         )
         return users
     }

@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise'
 import { DBConfig } from '../../DBConfig.js'
+import {roleModel} from "./roleModel.js";
 
 
 const connection = await mysql.createConnection(DBConfig)
@@ -11,6 +12,19 @@ export class categoryModel {
             'SELECT * FROM categoria',
         )
         return categories
+    }
+
+    static async getByCategoryName({ nombre }) {
+        const [state] = await connection.query(
+            'SELECT * FROM categoria WHERE LOWER(Nombre) = LOWER(?)',
+            [nombre]
+        );
+
+        if (state.length === 0) {
+            return null;
+        }
+
+        return state[0];
     }
 
     static async getById ({ id }) {

@@ -1,5 +1,6 @@
 import {StateModel} from '../models/mysql/stateModel.js'
 import{validateState, validateStateUpdate} from '../schemas/stateSchema.js'
+import {roleModel} from "../models/mysql/roleModel.js";
 
 export class StateController {
 
@@ -43,5 +44,12 @@ export class StateController {
     const updatedState = await StateModel.update({id, input: req.body})
     if(updatedState) return res.json(updatedState)
     res.status(404).json({message: 'Estado no actualizado'})
+  }
+
+  static async getByStateName(req, res) {
+    const {nombre} = req.params
+    const state = await StateModel.getByStateName({nombre})
+    if(state) return res.json(state)
+    res.status(404).json({message: 'Estado no encontrado'})
   }
 }

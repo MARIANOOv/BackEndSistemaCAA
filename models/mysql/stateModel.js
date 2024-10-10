@@ -12,6 +12,19 @@ export class StateModel {
     return states
   }
 
+  static async getByStateName({ nombre }) {
+    const [state] = await connection.query(
+        'SELECT * FROM estado WHERE LOWER(Tipo) = LOWER(?)',
+        [nombre]
+    );
+
+    if (state.length === 0) {
+      return null;
+    }
+
+    return state[0];
+  }
+
   static async getById ({ id }) {
     const [states] = await connection.query(
       'SELECT * FROM Estado WHERE idEstado = ?',
