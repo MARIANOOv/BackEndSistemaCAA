@@ -58,6 +58,15 @@ export class resourceModel {
 
     static async delete ({ id }) {
         try {
+            const [result] = await connection.query(
+                'SELECT * FROM reservacion_recursos WHERE idRecurso = ?',
+                [id]
+            )
+
+            if(result.length>0){
+                return false
+            }
+
             await connection.query(
                 'DELETE FROM recursos WHERE idRecursos = ?',
                 [id]

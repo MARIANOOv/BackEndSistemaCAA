@@ -28,7 +28,7 @@ export class categoryController {
         const {id} = req.params
         const deletedCategory = await categoryModel.delete({id})
 
-        if(deletedCategory === false) return res.status(404).json({message: 'Categoria no eliminada'})
+        if(deletedCategory === false) return res.status(404).json({message: 'Categoria no eliminada, se encuentra asociada a un activo'})
         res.status(204).json({message: "Se elimino correctamente la categoria"})
     }
 

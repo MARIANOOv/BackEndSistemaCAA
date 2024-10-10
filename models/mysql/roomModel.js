@@ -74,6 +74,15 @@ export class RoomModel {
 
     static async delete ({ id }) {
         try {
+            const [result] = await connection.query(
+                'SELECT * FROM reservacion WHERE idSala = ?',
+                [id]
+            );
+
+            if (result.length > 0) {
+                return false
+            }
+
             await connection.query(
                 'DELETE FROM sala WHERE idSala = ?',
                 [id]

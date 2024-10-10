@@ -72,7 +72,6 @@ export class valorationController {
     const { idEncuesta } = req.params;
     const deleted = await valorationModel.delete(idEncuesta);
     if (deleted) {
-      console.log('Valoración eliminada correctamente');
       return res.status(204).json({ message: 'Valoración eliminada correctamente' });
     }
     return res.status(404).json({ message: 'Valoración no encontrada' });

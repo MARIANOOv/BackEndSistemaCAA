@@ -71,7 +71,7 @@ export class RoomController {
         const {id} = req.params
         const deletedRoom = await RoomModel.delete({id})
 
-        if(deletedRoom === false) return res.status(404).json({message: 'Sala no eliminada'})
+        if(deletedRoom === false) return res.status(404).json({message: 'Sala no eliminada, alguna reservacion posee esta sala'})
         res.status(204).json({message: "Se elimino correctamente la sala"})
     }
 

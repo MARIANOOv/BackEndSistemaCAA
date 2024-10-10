@@ -11,7 +11,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3000/roles/1
+DELETE http://localhost:3000/roles/2
 
 ###
 PATCH http://localhost:3000/roles/3

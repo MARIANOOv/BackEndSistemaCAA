@@ -63,6 +63,15 @@ export class cubicleModel {
 
     static async delete ({ id }) {
         try {
+            const [result] = await connection.query(
+                'SELECT * FROM reservacion WHERE idCubiculo = ?',
+                [id]
+            )
+
+            if (result.length > 0) {
+                return false
+            }
+
             await connection.query(
                 'DELETE FROM cubiculo WHERE idCubiculo = ?',
                 [id]

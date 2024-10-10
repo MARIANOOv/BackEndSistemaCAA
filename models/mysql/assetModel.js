@@ -129,7 +129,7 @@ export class assetModel {
         try {
 
 
-            console.log(idEstado)
+
 
             if(idEstado != null){
 

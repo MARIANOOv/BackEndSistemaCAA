@@ -670,15 +670,26 @@ export class reservationModel {
 
   static async deleteByDate({ date }) {
 
-    console.log(date)
+
     try {
+      const [reservations] = await connection.query(
+          'SELECT * FROM reservacion WHERE Fecha = ?;', [date]
+      );
+
+      for (const reservation of reservations) {
+        await connection.query(
+            'DELETE FROM reservacion_recursos WHERE idReservacion = ?',
+            [reservation.idReservacion]
+        );
+      }
+
       await connection.query(
           'DELETE FROM reservacion r WHERE r.Fecha = ?;',
           [date]
       );
     }
     catch (error) {
-      throw new Error("Error al eliminar el rol")
+      throw new Error(error)
     }
     return true
   }
