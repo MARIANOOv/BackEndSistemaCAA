@@ -52,6 +52,44 @@ export class assetModel {
         return assets
     }
 
+    static async getFirstAvailableAsset ({ assetCategory }) {
+
+        const [categoryId] = await connection.query(
+          'SELECT idCategoria FROM categoria where LOWER(Nombre) = ?',
+          [assetCategory.toLowerCase()])
+
+        if(categoryId.length === 0) {
+          return null
+        }
+
+        const [asset] = await connection.query(
+          `SELECT 
+            a.NumeroPlaca,
+            a.Nombre,
+            a.Descripcion,
+            a.Modelo,
+            a.NumeroSerie,
+            a.Marca,
+            e.Tipo AS NombreEstado
+          FROM 
+            activo a
+          JOIN 
+            estado e ON a.idEstado = e.idEstado
+          JOIN
+            categoria c on a.idCategoria = c.idCategoria
+          WHERE 
+            a.idCategoria = ? AND a.Condicion = 0
+          LIMIT 1`,
+          [categoryId[0].idCategoria]
+        )
+
+        if(asset.length === 0) {
+            return null
+        }
+        return asset[0]
+
+    }
+
     static async create ({ input }) {
         const {
             numeroPlaca,
@@ -108,7 +146,7 @@ export class assetModel {
             )
         }
         catch (error) {
-            throw new Error("Error al crear el activo")
+            throw new Error(error)
         }
 
         const [asset] = await connection.query(

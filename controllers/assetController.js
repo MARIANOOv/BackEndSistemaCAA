@@ -20,6 +20,13 @@ export class assetController {
         res.status(404).json({message: 'Activos con esa categoria no encontrados'})
     }
 
+    static async getFirstAvailableAsset(req, res) {
+        const {assetCategory} = req.params
+        const asset = await assetModel.getFirstAvailableAsset({assetCategory})
+        if(asset) return res.json(asset)
+        res.status(404).json({message: 'No hay activos para disponibles para prestamo'})
+    }
+
     static async create(req, res) {
 
         const result = validateAsset(req.body)
