@@ -1,6 +1,13 @@
 import mysql from 'mysql2/promise'
 import {DBConfig} from '../../DBConfig.js'
 import bcrypt from 'bcrypt'
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Define __filename y __dirname en un entorno ES6 (ES Modules)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 const connection = await mysql.createConnection(DBConfig)
@@ -24,6 +31,74 @@ export class applicationModel {
         }
         return application[0]
     }
+    static async getByUserId({ userId }) {
+        const [applications] = await connection.query(
+            `SELECT 
+            s.idSolicitud,
+            s.Estado,
+            s.FechaInicio,
+            s.FechaFin,
+            s.archivoSolicitud,
+            a.NumeroPlaca,
+            a.Nombre AS NombreActivo,
+            a.Descripcion AS DescripcionActivo,
+            c.Nombre AS CategoriaActivo,
+            u.CedulaCarnet,
+            u.Nombre AS NombreUsuario
+        FROM 
+            solicitud s
+        LEFT JOIN 
+            activo a ON s.idActivo = a.NumeroPlaca
+        LEFT JOIN 
+            categoria c ON a.idCategoria = c.idCategoria
+        LEFT JOIN 
+            usuario u ON s.idUsuario = u.CedulaCarnet
+        WHERE 
+            s.idUsuario = ?;`,
+            [userId]
+        );
+
+        const applicationMap = {};
+
+        applications.forEach((row) => {
+            const {
+                idSolicitud,
+                Estado,
+                FechaInicio,
+                FechaFin,
+                archivoSolicitud,
+                NumeroPlaca,
+                NombreActivo,
+                DescripcionActivo,
+                CategoriaActivo,
+                CedulaCarnet,
+                NombreUsuario
+            } = row;
+
+            if (!applicationMap[idSolicitud]) {
+                applicationMap[idSolicitud] = {
+                    idSolicitud,
+                    Estado,
+                    FechaInicio,
+                    FechaFin,
+                    archivoSolicitud,
+                    usuario: {
+                        CedulaCarnet,
+                        NombreUsuario
+                    },
+                    activo: {
+                        NumeroPlaca,
+                        NombreActivo,
+                        DescripcionActivo,
+                        CategoriaActivo
+                    }
+                };
+            }
+        });
+
+        return Object.values(applicationMap);
+    }
+
 
     static async create ({ input }) {
         const {
@@ -74,17 +149,54 @@ export class applicationModel {
         return application[0]
     }
 
-    static async delete ({ id }) {
+    static async delete({ id }) {
         try {
+
+            const [rows] = await connection.query(
+                'SELECT archivoSolicitud FROM solicitud WHERE idSolicitud = ?',
+                [id]
+            );
+
+            if (rows.length > 0) {
+                const archivoSolicitud = rows[0].archivoSolicitud;
+
+
+                console.log("archivoSolicitud desde la base de datos:", archivoSolicitud);
+
+
+                const filePath = path.join(__dirname, '..', '..', 'uploads', path.basename(archivoSolicitud));
+
+
+                console.log("Ruta completa del archivo:", filePath);
+
+
+                if (fs.existsSync(filePath)) {
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            console.error("Error al eliminar el archivo:", err);
+                        } else {
+                            console.log("Archivo eliminado:", archivoSolicitud);
+                        }
+                    });
+                } else {
+                    console.log("El archivo no existe en la ruta especificada:", filePath);
+                }
+            } else {
+                console.log("No se encontró la solicitud con el ID:", id);
+            }
+
+
             await connection.query(
                 'DELETE FROM solicitud WHERE idSolicitud = ?',
                 [id]
-            )
+            );
+
+            return true;
+
+        } catch (error) {
+            console.error("Error general:", error);
+            throw new Error("Error al eliminar la solicitud");
         }
-        catch (error) {
-            throw new Error("Error al eliminar la solicitud")
-        }
-        return true
     }
 
     static async update({ id, input }) {

@@ -27,6 +27,13 @@ export class applicationController {
         res.status(404).json({ message: 'Solicitud no encontrada' });
     }
 
+    static async getByUserId(req, res) {
+        const { userId } = req.params;
+        const applications = await applicationModel.getByUserId({ userId });
+        if(applications.length > 0) return res.json(applications)
+        res.status(404).json({message: 'No hay solicitudes realizadas por este usuario'})
+    }
+
     static create = [
         upload.single('archivoSolicitud'),  // Middleware de multer para manejar el archivo
         async (req, res) => {

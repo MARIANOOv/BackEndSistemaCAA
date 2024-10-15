@@ -159,6 +159,13 @@ export class assetModel {
 
     static async delete ({ id }) {
         try {
+            const [result] = await connection.query(
+                'SELECT * FROM solicitud WHERE idActivo = ?',
+                [id]
+            )
+            if (result.length > 0) {
+                return false
+            }
             await connection.query(
                 'DELETE FROM activo WHERE NumeroPlaca = ?',
                 [id]
