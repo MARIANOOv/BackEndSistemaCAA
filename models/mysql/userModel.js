@@ -69,7 +69,8 @@ export class userModel {
     }
 
 
-    static async create ({ input }) {
+    // En el modelo userModel.js
+    static async create({ input }) {
         const {
             cedulaCarnet,
             nombre,
@@ -79,67 +80,64 @@ export class userModel {
             telefono,
             telefono2,
             direccion,
-            estado,
             idRol
-        } = input
-        try {
+        } = input;
 
+        try {
             const [resultCedula] = await connection.query(
-                'SELECT cedulaCarnet FROM usuario WHERE CedulaCarnet = ?',
-                [cedulaCarnet]
-            )
-            console.log(resultCedula.length)
+              'SELECT cedulaCarnet FROM usuario WHERE cedulaCarnet = ?',
+              [cedulaCarnet]
+            );
+
             if (resultCedula.length > 0) {
-                return false
+                throw new Error('Usuario existente con esa cédula');
             }
 
-
             const [resultEmail] = await connection.query(
-                'SELECT correoEmail FROM usuario WHERE CorreoEmail = ?',
-                [correoEmail]
-            )
+              'SELECT correoEmail FROM usuario WHERE correoEmail = ?',
+              [correoEmail]
+            );
 
             if (resultEmail.length > 0) {
-                return false
+                throw new Error('Usuario existente con ese correo');
             }
 
             const [resultTelefono] = await connection.query(
-                'SELECT telefono FROM usuario WHERE Telefono = ?',
-                [telefono]
-            )
+              'SELECT telefono FROM usuario WHERE telefono = ?',
+              [telefono]
+            );
 
             if (resultTelefono.length > 0) {
-                return false
+                throw new Error('Usuario existente con ese teléfono');
             }
-
 
             const [resultRole] = await connection.query(
-                'SELECT idRol FROM rol WHERE idRol = ?',
-                [idRol]
-            )
+              'SELECT idRol FROM rol WHERE idRol = ?',
+              [idRol]
+            );
 
             if (resultRole.length <= 0) {
-                return false
+                throw new Error('Rol no válido');
             }
 
-            const hashedPassword = await bcrypt.hash(contrasena, 10)
+            const hashedPassword = await bcrypt.hash(contrasena, 10);
 
             await connection.query(
-                'INSERT INTO Usuario (CedulaCarnet, Nombre, CorreoEmail, CorreoInstitucional, Contrasena, Telefono, Telefono2, Direccion, Estado, idRol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [cedulaCarnet, nombre, correoEmail, correoInstitucional, hashedPassword, telefono, telefono2, direccion, estado, idRol]
-            )
-        }
-        catch (error) {
-            throw new Error("Error al crear usuario")
-        }
+              'INSERT INTO usuario (CedulaCarnet, Nombre, CorreoEmail, CorreoInstitucional, Contrasena, Telefono, Telefono2, Direccion, Estado, idRol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+              [cedulaCarnet, nombre, correoEmail, correoInstitucional, hashedPassword, telefono, telefono2, direccion, true, idRol]
+            );
 
-        const [user] = await connection.query(
-            `SELECT *
-             FROM usuario WHERE CedulaCarnet = ?;`,
-            [cedulaCarnet]
-        )
-        return user[0]
+            const [user] = await connection.query(
+              `SELECT * FROM usuario WHERE CedulaCarnet = ?;`,
+              [cedulaCarnet]
+            );
+
+            return user[0];
+        } catch (error) {
+            return error.message; // Retorna el mensaje de error
+        }
     }
+
 
     static async delete ({ id }) {
         try {
@@ -174,7 +172,7 @@ export class userModel {
                 [correoEmail]
             )
             if (resultEmail.length > 0) {
-                return false
+                throw new Error('Usuario existente con ese correo');
             }
 
             const [resultTelefono] = await connection.query(
@@ -182,7 +180,7 @@ export class userModel {
                 [telefono]
             )
             if (resultTelefono.length > 0) {
-                return false
+                throw new Error('Usuario existente con ese teléfono');
             }
             let hashedPassword = contrasena
             if(contrasena){
@@ -217,7 +215,7 @@ export class userModel {
 
             return updatedUser[0];
         } catch (error) {
-            throw new Error(error);
+            return error.message;
         }
     }
 

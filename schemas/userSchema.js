@@ -4,7 +4,7 @@ const userSchema = z.object({
     cedulaCarnet: z.number().int({
         invalid_type_error: 'La cedula o carnet debe ser un numero entero',
         required_error: 'La cedula o carnet es requerida'
-    }).positive(),
+    }).positive().max(2147483647),
     nombre: z.string({
         invalid_type_error: 'El nombre debe ser un string',
         required_error: 'El nombre es requerido'

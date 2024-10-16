@@ -16,16 +16,24 @@ export class userController {
         res.status(404).json({message: 'Usuario no encontrado'})
     }
 
+    // En el controlador userController.js
     static async create(req, res) {
-
-        const result = validateUser(req.body)
+        const result = validateUser(req.body);
         if (result.success === false) {
-            return res.status(400).json({error: JSON.parse(result.error.message)})
+            return res.status(400).json({ message: JSON.parse(result.error.message) });
         }
-        const newUser= await userModel.create({input: req.body})
-        if(newUser === false) return res.status(409).json({message: 'Dato repetido'})
-        res.status(201).json(newUser)
+
+        const newUser = await userModel.create({ input: req.body });
+
+        // Si el modelo retorna un mensaje de error, responde con un 409 (conflicto) y el mensaje adecuado
+        if (typeof newUser === 'string') {
+            return res.status(409).json({ message: newUser });
+        }
+
+        // Si la creación fue exitosa, responde con el nuevo usuario creado
+        res.status(201).json(newUser);
     }
+
 
     static async delete(req, res) {
         const {id} = req.params
@@ -36,16 +44,24 @@ export class userController {
     }
 
     static async update(req, res) {
-        const result = validateUserUpdate(req.body)
+        const result = validateUserUpdate(req.body);
         if (result.success === false) {
-            return res.status(400).json({error: JSON.parse(result.error.message)})
+            return res.status(400).json({ error: JSON.parse(result.error.message) });
         }
 
-        const {id} = req.params
-        const updatedUser = await userModel.update({id, input: req.body})
-        if(updatedUser) return res.json(updatedUser)
-        res.status(404).json({message: 'Usuario no actualizado'})
+        const { id } = req.params;
+        const updatedUser = await userModel.update({ id, input: req.body });
+
+        // Si el modelo retorna un mensaje de error, envíalo como respuesta
+        if (typeof updatedUser === 'string') {
+            // Responde con el mensaje de error específico
+            return res.status(409).json({ message: updatedUser });
+        }
+
+        // Si no hubo errores, envía una respuesta de éxito
+        return res.json({ message: 'Usuario actualizado correctamente' });
     }
+
     static async login(req, res) {
 
         const user = await userModel.login({input: req.body})

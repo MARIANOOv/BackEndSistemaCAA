@@ -42,6 +42,6 @@ export class resourceController {
         const {id} = req.params
         const updatedResource = await resourceModel.update({id, input: req.body})
         if(updatedResource) return res.json(updatedResource)
-        res.status(404).json({message: 'Recurso no actualizado'})
+        res.status(404).json({message: 'Recurso existente con ese nombre'})
     }
 }
