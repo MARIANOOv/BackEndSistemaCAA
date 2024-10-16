@@ -110,7 +110,7 @@ export class assetModel {
             )
 
             if (resultPlaca.length > 0) {
-                return false
+                throw new Error('Activo existente con ese numero de placa');
             }
             const [resultSerie] = await connection.query(
                 'SELECT numeroSerie FROM activo WHERE NumeroSerie = ?',
@@ -118,7 +118,7 @@ export class assetModel {
             )
 
             if (resultSerie.length > 0) {
-                return false
+                throw new Error('Activo existente con ese numero de serie');
             }
 
 
@@ -146,7 +146,7 @@ export class assetModel {
             )
         }
         catch (error) {
-            throw new Error(error)
+            return error.message;
         }
 
         const [asset] = await connection.query(
