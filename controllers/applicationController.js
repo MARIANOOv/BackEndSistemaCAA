@@ -1,6 +1,9 @@
 import { applicationModel } from '../models/mysql/applicationModel.js';
 import { validateApplication, validateApplicationUpdate } from '../schemas/applicationSchema.js';
 import multer from 'multer';
+import {userModel} from "../models/mysql/userModel.js";
+import {sendEmail} from "../services/emailService.js";
+import {assetModel} from "../models/mysql/assetModel.js";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -11,6 +14,48 @@ const storage = multer.diskStorage({
         cb(null, `${uniqueSuffix}-${file.originalname}`);
     }
 });
+
+
+const createEmailHtml = (asunto, descripcion) => `
+  <div style="padding: 20px; background-color: #f4f4f4;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px;">
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <!-- Contenedor del Logo Centrador -->
+          <table border="0" cellpadding="0" cellspacing="0" style="text-align: center;">
+            <tr>
+              <!-- Texto "TEC" -->
+              <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 36px; font-weight: bold;">
+                TEC
+              </td>
+              <!-- Línea Roja Separadora -->
+              <td style="width: 5px; background-color: #c1272d;"></td>
+              <!-- Texto "Tecnológico de Costa Rica" -->
+              <td style="background-color: #ffffff; padding: 10px 20px; color: #000000; font-family: 'Georgia', serif; font-size: 18px;">
+                Centro Académico<br>de Alajuela
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="padding: 20px 0;">
+          <!-- Asunto -->
+          <h1 style="font-size: 24px; font-weight: bold; color: #333; margin: 0;">${asunto}</h1>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="padding: 10px 0;">
+          <!-- Descripción -->
+          <p style="font-size: 16px; color: #555; line-height: 1.5; margin: 0; text-align: justify;">
+            ${descripcion}
+          </p>
+        </td>
+      </tr>
+    </table>
+  </div>
+`;
+
 const upload = multer({ storage: storage });
 
 export class applicationController {
@@ -100,4 +145,102 @@ export class applicationController {
         if (updatedApplication) return res.json(updatedApplication);
         res.status(404).json({ message: 'Solicitud no actualizada' });
     }
+
+
+
+
+// Ejemplo de uso en la función sendJustificationEmail
+    static async sendJustificationEmail(req, res) {
+        try {
+            const { idSolicitud, idUsuario, justificacion } = req.body;
+
+            if (!idSolicitud || !idUsuario) {
+                return res.status(400).json({ message: 'ID de solicitud y ID de usuario son requeridos' });
+            }
+
+
+
+            // Obtener la solicitud usando `idSolicitud`
+            const solicitud = await applicationModel.getById({id: idSolicitud});
+            if (!solicitud) {
+                return res.status(404).json({ message: 'Solicitud no encontrada' });
+            }
+
+            // Obtener el correo del usuario
+            const user = await userModel.getById({id: idUsuario});
+            if (!user || !user.CorreoEmail) {
+                return res.status(404).json({ message: 'Usuario no encontrado o sin correo electrónico registrado' });
+            }
+
+            // Obtener los detalles del activo
+            const activo = await assetModel.getById({id: solicitud.idActivo});
+            if (!activo) {
+                return res.status(404).json({ message: 'Activo no encontrado' });
+            }
+
+
+
+            // Construir asunto y cuerpo del correo basado en la justificación
+            let emailSubject;
+            let emailDescription;
+
+            if (!justificacion) {
+                emailSubject = 'Solicitud Aceptada';
+                emailDescription = `
+        <div style="padding: 20px; background-color: #f4f4f4;">
+            Su solicitud ha sido aceptada. Puede pasar a recoger el activo solicitado en el centro correspondiente.
+            <br><br>
+            <strong>Detalles de la Solicitud:</strong>
+            <div style="text-align: center; margin-top: 10px;">
+                <p><strong>ID Solicitud:</strong> ${idSolicitud}</p>
+                <p><strong>Activo:</strong> ${activo.Nombre}</p>
+                <p><strong>Modelo:</strong> ${activo.Modelo}</p>
+                <p><strong>Descripción:</strong> ${activo.Descripcion}</p>
+                <p><strong>Fecha de Inicio:</strong> ${new Date(solicitud.FechaInicio).toLocaleDateString()}</p>
+                <p><strong>Fecha Fin:</strong> ${new Date(solicitud.FechaFin).toLocaleDateString()}</p>
+            </div>
+        </div>
+    `;
+            } else {
+                emailSubject = 'Solicitud Rechazada';
+                emailDescription = `
+        <div style="padding: 20px; background-color: #f4f4f4;">
+            Su solicitud ha sido rechazada.
+            <br><br>
+            <strong>Justificación:</strong> ${justificacion}
+            <br><br>
+            <strong>Detalles de la Solicitud:</strong>
+            <div style="text-align: center; margin-top: 10px;">
+                <p><strong>ID Solicitud:</strong> ${idSolicitud}</p>
+                <p><strong>Activo:</strong> ${activo.Nombre}</p>
+                <p><strong>Modelo:</strong> ${activo.Modelo}</p>
+                <p><strong>Descripción:</strong> ${activo.Descripcion}</p>
+                <p><strong>Fecha de Inicio:</strong> ${new Date(solicitud.FechaInicio).toLocaleDateString()}</p>
+                <p><strong>Fecha Fin:</strong> ${new Date(solicitud.FechaFin).toLocaleDateString()}</p>
+            </div>
+        </div>
+    `;
+            }
+
+
+
+            // Crear HTML del correo usando un template o directamente
+            const emailHtml = createEmailHtml(emailSubject, emailDescription);
+
+            // Enviar el correo
+            await sendEmail(
+                user.CorreoEmail,
+                emailSubject,
+                emailDescription,
+                emailHtml
+            );
+
+            res.json({ message: 'Correo enviado correctamente' });
+        } catch (error) {
+            console.error('Error al enviar el correo:', error);
+            res.status(500).json({ message: 'Error al enviar el correo' });
+        }
+    }
+
+
 }
