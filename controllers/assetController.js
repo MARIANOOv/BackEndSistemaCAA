@@ -34,7 +34,7 @@ export class assetController {
             return res.status(400).json({error: JSON.parse(result.error.message)})
         }
         const newAsset= await assetModel.create({input: req.body})
-        if(newAsset === false) return res.status(409).json({message: 'Activo con numero de serie o placa ya existe, tambien puede faltar la categoria a la que pertenece'})
+        if(typeof newAsset === 'string') return res.status(409).json({ message: newAsset });
         res.status(201).json(newAsset)
     }
 
@@ -42,7 +42,7 @@ export class assetController {
         const {id} = req.params
         const deletedAsset = await assetModel.delete({id})
 
-        if(deletedAsset === false) return res.status(404).json({message: 'Activo no eliminado'})
+        if(deletedAsset === false) return res.status(404).json({message: 'Este Activo se encuentra vinculado con una solicitud, no se puede eliminar'})
         res.status(204).json({message: "Se elimino correctamente el Activo"})
     }
 
