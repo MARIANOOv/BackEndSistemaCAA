@@ -198,6 +198,36 @@ export class applicationModel {
             throw new Error("Error al eliminar la solicitud");
         }
     }
+    static async updateSignApplication({ id, input }) {
+        const {
+            estado,
+            archivoSolicitud
+        } = input
+        try {
+
+            const [result] = await connection.query(
+              `UPDATE solicitud
+                   SET Estado = (?),
+                   ArchivoSolicitud = (?)
+                   WHERE idSolicitud = ?;`,
+              [estado, archivoSolicitud, id]
+            );
+
+            if (result.affectedRows === 0) {
+                throw new Error('No se encontro la solicitud con ese id');
+            }
+
+            const [updatedApplication] = await connection.query(
+              `SELECT *
+                    FROM solicitud WHERE idSolicitud = ?;`,
+              [id]
+            );
+
+            return updatedApplication[0];
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
 
     static async update({ id, input }) {
         const {

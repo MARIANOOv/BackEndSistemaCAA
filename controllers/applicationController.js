@@ -4,6 +4,13 @@ import multer from 'multer';
 import {userModel} from "../models/mysql/userModel.js";
 import {sendEmail} from "../services/emailService.js";
 import {assetModel} from "../models/mysql/assetModel.js";
+import { fileURLToPath } from 'url'
+import path from 'path'
+import fs from 'fs'
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -145,6 +152,52 @@ export class applicationController {
         if (updatedApplication) return res.json(updatedApplication);
         res.status(404).json({ message: 'Solicitud no actualizada' });
     }
+
+    static updateSignApplication = [
+        upload.single('archivoSolicitud'),
+        async (req, res) => {
+            const { id } = req.params;
+            const { estado } = req.body;
+
+            try {
+
+                const currentApplication = await applicationModel.getById({id: id });
+
+                if (!currentApplication) {
+                    return res.status(404).json({ message: 'Solicitud no encontrada' });
+                }
+
+
+                let newFilePath;
+                if (req.file) {
+
+                    const currentFilePath = path.join(__dirname, '..', 'uploads', path.basename(currentApplication.archivoSolicitud));
+
+                    if (fs.existsSync(currentFilePath)) {
+                        fs.unlinkSync(currentFilePath);
+                    }
+
+                    newFilePath = req.file.path;
+                } else {
+
+                    newFilePath = currentApplication.archivoSolicitud;
+                }
+
+
+                const input = {
+                    estado,
+                    archivoSolicitud: newFilePath
+                };
+
+                const updatedApplication = await applicationModel.updateSignApplication({ id, input });
+
+                res.json(updatedApplication);
+            } catch (error) {
+                console.error("Error al actualizar la solicitud:", error);
+                res.status(500).json({ message: 'Error al actualizar la solicitud' });
+            }
+        }
+    ];
 
 
 
