@@ -7,6 +7,7 @@ export const applicationRouter = Router();
 
 applicationRouter.get('/', applicationController.getAll)
 applicationRouter.post('/',applicationController.create)
+applicationRouter.get('/getbyUserId/:userId',applicationController.getByUserId)
 
 applicationRouter.get('/:id',applicationController.getById)
 applicationRouter.delete('/:id',applicationController.delete)

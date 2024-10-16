@@ -1,4 +1,5 @@
 import express from 'express';
+import { fileURLToPath } from 'url';
 import { roomRouter } from "./routes/roomRouter.js";
 import { cubicleRouter } from "./routes/cubicleRouter.js";
 import { resourceRouter } from "./routes/resourceRouter.js";
@@ -14,6 +15,7 @@ import multer from 'multer';
 import cron from 'node-cron';
 import {notificationService} from './services/notificationService.js';
 import { valorationRouter } from './routes/valorationRouter.js'
+import * as path from "node:path";
 
 const app = express();
 app.use(cors({origin: '*'}));
@@ -36,13 +38,13 @@ app.use('/assets', assetRouter);
 app.use('/applications', applicationRouter);
 app.use('/reservations', reservationRouter);
 app.use('/valorations', valorationRouter);
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 cron.schedule('14 13 * * *', () => {
     notificationService();
 }, {
     timezone: "America/Costa_Rica"
 });
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const PORT = process.env.PORT ?? 3000;
 
 app.listen(PORT, () => {
