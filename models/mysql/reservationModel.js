@@ -528,6 +528,7 @@ export class reservationModel {
       refrigerio,
       idRecursos,
       estado,
+      encuestaCompletada,
     } = input
 
     try {
@@ -537,7 +538,7 @@ export class reservationModel {
 
       const [result] = await connection.query(
         'INSERT INTO reservacion (Fecha,HoraInicio,HoraFin,idSala,idCubiculo,idUsuario,Observaciones,Refrigerio, Estado, EncuestaCompletada) VALUES (?,?,?,?,?,?,?,?,?,?)',
-        [fechaToDate, horaInicio, horaFin, idSala, idCubiculo, idUsuario, observaciones, refrigerio, estado, false]
+        [fechaToDate, horaInicio, horaFin, idSala, idCubiculo, idUsuario, observaciones, refrigerio, estado, encuestaCompletada]
       )
 
       const [userDetails] = await connection.query(
