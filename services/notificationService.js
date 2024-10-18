@@ -8,7 +8,7 @@ import {cubicleModel} from "../models/mysql/cubicleModel.js";
 import {RoomModel} from "../models/mysql/roomModel.js";
 
 export async function notificationService() {
-    const threeDaysFromNow = moment().tz('America/Costa_Rica').add(1, 'days').format('YYYY-MM-DD');
+    const threeDaysFromNow = moment().tz('America/Costa_Rica').add(3, 'days').format('YYYY-MM-DD');
     try {
         const upcomingReservations = await reservationModel.getByDate({ date: threeDaysFromNow });
 
